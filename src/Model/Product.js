@@ -51,4 +51,18 @@ Product.delete = (id) => {
     })
 }
 
+Product.sort = (sortBy, action) => {
+    return new Promise((resolve, reject) => {
+        action = (action == 'up') ? 'DESC':'ASC'
+        sortBy = (sortBy == 'date') ? 'id':sortBy
+        MyDB.query(`SELECT * FROM product ORDER BY ${sortBy} ${action}`)
+            .then(res => {
+                resolve(res.rows)
+            })
+            .catch(err => {
+                reject(err)
+            })
+    })
+}
+
 module.exports = Product

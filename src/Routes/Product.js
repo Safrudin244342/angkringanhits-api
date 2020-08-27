@@ -4,7 +4,8 @@ const Controller = require('../Cotroller/Product')
 
 Route.get("/", Controller.all)
 Route.post("/", Controller.add)
-Route.put("/", Controller.update)
-Route.delete("/", Controller.delete)
+Route.put("/:id", Controller.update)
+Route.delete("/:id", Controller.delete)
+Route.get("/by/:sortBy/:action", Controller.sort)
 
 module.exports = Route
