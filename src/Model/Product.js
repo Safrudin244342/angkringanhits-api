@@ -1,5 +1,4 @@
 const MyDB = require('../Config/Database')
-const MyDb = require('../Config/Database')
 const Product = {}
 
 Product.getAll = () => {

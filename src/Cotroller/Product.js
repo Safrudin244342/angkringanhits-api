@@ -33,6 +33,7 @@ Product.update = async (req, res) => {
         let id = req.params.id
         let {name, price, stock, imgLocation, category} = req.body
 
+        if (isNaN(parseInt(id))) return res.send(Respon.Failed(400, "id must be number"))
         if (typeof(name) != "string") return res.send(Respon.Failed(400, "name must be string"))
         if (typeof(imgLocation) != "string") return res.send(Respon.Failed(400, "imgLocation must be string"))
         if (isNaN(parseInt(price))) return res.send(Respon.Failed(400, "price must be number"))
@@ -49,6 +50,9 @@ Product.update = async (req, res) => {
 Product.delete = async (req, res) => {
     try{
         let id = req.params.id
+
+        if (isNaN(parseInt(id))) return res.send(Respon.Failed(400, "id must be number"))
+
         await Model.delete(id)
         return res.send(Respon.Succes(200, []))
     }catch (err){
