@@ -1,0 +1,23 @@
+{
+  "name": "angkringanhits-api",
+  "version": "1.0.0",
+  "description": "api for website angkringan-hits",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Safrudin244342/angkringanhits-api.git"
+  },
+  "keywords": [
+    "api",
+    "website"
+  ],
+  "author": "muhamad safrudin abdul azis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Safrudin244342/angkringanhits-api/issues"
+  },
+  "homepage": "https://github.com/Safrudin244342/angkringanhits-api#readme"
+}
