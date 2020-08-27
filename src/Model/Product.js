@@ -13,6 +13,26 @@ Product.getAll = () => {
     })
 }
 
+Product.search = (name) => {
+    return new Promise((resolve, reject) => {
+        let sql = []
+        //LIKE '%a%' OR LIKE '%b%'
+        for (sub of name){
+            sql.push(`name LIKE '%${sub}%'`)
+        }
+
+        sql = sql.join(' OR ')
+        
+        MyDB.query(`SELECT * FROM product WHERE ${sql}`)
+            .then(res => {
+                resolve(res.rows)
+            })
+            .catch(err => {
+                reject(err)
+            })
+    })
+}
+
 Product.add = (name, price, stock, imgLocation, category) => {
     return new Promise((resolve, reject) => {
         MyDB.query(`INSERT INTO product(name, price, stock, "imgLocation", category) VALUES ('${name}', ${parseInt(price)}, ${parseInt(stock)}, '${imgLocation}', '${category}')`)

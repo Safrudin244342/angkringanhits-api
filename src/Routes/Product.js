@@ -7,5 +7,6 @@ Route.post("/", Controller.add)
 Route.put("/:id", Controller.update)
 Route.delete("/:id", Controller.delete)
 Route.get("/by/:sortBy/:action", Controller.sort)
+Route.get("/search", Controller.search)
 
 module.exports = Route

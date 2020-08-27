@@ -11,6 +11,22 @@ Product.all = async (req, res) => {
     }
 }
 
+Product.search = async (req, res) => {
+    try{
+        let name = req.query.name
+
+        if (typeof(name) != 'string' || name.length == 0) return res.send(Respon.Failed(400, "name must be string"))
+
+        name = name.split(' ')
+        let data = await Model.search(name)
+
+        return res.send(Respon.Succes(200, data))
+    }catch (error){
+        console.log(error)
+        return res.send(Respon.Failed(500, "Database Error"))
+    }
+}
+
 Product.add = async (req, res) => {
     try{
         let {name, price, stock, imgLocation, category} = req.body
