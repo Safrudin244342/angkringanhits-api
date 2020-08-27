@@ -1,11 +1,20 @@
 const express = require('express')
 const Routes = require('./src/main')
-const Product = require('./src/Cotroller/Product')
 const Server = express()
+const Mydb = require('./src/Config/Database')
+const MyDb = require('./src/Config/Database')
 const Port = 3000
 
 Server.use(Routes)
 
+MyDb.connect()
+    .then(res => {
+        console.log("Dataase Connected")
+    })
+    .catch(err => {
+        console.log("Database not Connected")
+    })
+
 Server.listen(Port, () => {
-    console.log(`Server running in port ${Port}`)
+    console.log(`Server listening in port ${Port}`)
 })
