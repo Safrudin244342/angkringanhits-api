@@ -1,6 +1,7 @@
 const Verifikasi = {}
 
 Verifikasi.input = (input, typeData) => {
+  input = String(input)
   const badChar = ["'", '<', '>']
 
   if (typeof input === 'undefined') return false
