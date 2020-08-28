@@ -15,7 +15,7 @@ History.getAll = () => {
 
 History.add = (cashier, orders, amount) => {
   return new Promise((resolve, reject) => {
-    MyDB.query(`INSERT INTO history(cashier, orders, amount) VALUES('${cashier}', '${orders}', ${amount})`)
+    MyDB.query(`INSERT INTO history(cashier, orders, amount) VALUES('${cashier}', '${orders}', ${parseInt(amount)})`)
       .then(success => {
         resolve(success)
       })
@@ -39,7 +39,7 @@ History.delete = (id) => {
 
 History.update = (id, cashier, orders, amount) => {
   return new Promise((resolve, reject) => {
-    MyDB.query(`UPDATE history SET cashier='${cashier}', orders='${orders}', amount=${amount} WHERE id=${id}`)
+    MyDB.query(`UPDATE history SET cashier='${cashier}', orders='${orders}', amount=${parseInt(amount)} WHERE id=${id}`)
       .then(res => {
         resolve(res)
       })
