@@ -39,7 +39,7 @@ History.delete = (id) => {
 
 History.update = (id, cashier, orders, amount) => {
   return new Promise((resolve, reject) => {
-    MyDB.query(`UPDATE history SET name='${cashier}', orders='${orders}', amount=${amount} WHERE id=${id}`)
+    MyDB.query(`UPDATE history SET cashier='${cashier}', orders='${orders}', amount=${amount} WHERE id=${id}`)
       .then(res => {
         resolve(res)
       })
