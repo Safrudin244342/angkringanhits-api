@@ -3,6 +3,7 @@ const Verifikasi = {}
 Verifikasi.input = (input, typeData) => {
   const badChar = ["'", '<', '>']
 
+  if (input) return false
   if (input.length === 0) return false
   if (badChar.some(badChar => input.indexOf(badChar) > 0)) return false
 
