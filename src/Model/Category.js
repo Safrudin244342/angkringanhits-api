@@ -25,4 +25,28 @@ Category.add = (category) => {
   })
 }
 
+Category.update = (id, category) => {
+  return new Promise((resolve, reject) => {
+    MyDB.query(`UPDATE category SET category='${category}' WHERE id=${id}`)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
+Category.delete = (id) => {
+  return new Promise((resolve, reject) => {
+    MyDB.query(`DELETE FROM category WHERE id=${id}`)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
 module.exports = Category

@@ -5,8 +5,18 @@ const MyDb = require('./src/Config/Database')
 const bodyParser = require('body-parser')
 const Port = 3000
 
+const log = (req, res, next) => {
+  const user = req.headers['user-agent']
+  const method = req.method
+  const url = req.url
+
+  console.log(`${user} > Method: ${method} > url: ${url}`)
+  next()
+}
+
 Server.use(bodyParser.urlencoded({ extended: false }))
 Server.use(bodyParser.json())
+Server.use(log)
 Server.use(Routes)
 
 MyDb.connect()

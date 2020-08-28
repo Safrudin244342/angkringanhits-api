@@ -25,4 +25,28 @@ History.add = (cashier, orders, amount) => {
   })
 }
 
+History.delete = (id) => {
+  return new Promise((resolve, reject) => {
+    MyDB.query(`DELETE FROM history WHERE id=${id}`)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
+History.update = (id, cashier, orders, amount) => {
+  return new Promise((resolve, reject) => {
+    MyDB.query(`UPDATE history SET name='${cashier}', orders='${orders}', amount=${amount} WHERE id=${id}`)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
 module.exports = History

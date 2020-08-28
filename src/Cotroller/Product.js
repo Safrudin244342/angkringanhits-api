@@ -1,5 +1,6 @@
 const Model = require('../Model/Product')
 const Respon = require('../Config/Respon')
+const Verifikasi = require('../Helper/Verifikasi')
 const Product = {}
 
 Product.all = async (req, res) => {
@@ -7,7 +8,7 @@ Product.all = async (req, res) => {
     const data = await Model.getAll()
     return res.send(Respon.Succes(200, data))
   } catch (error) {
-    return res.send(Respon.Failed(500, 'cannot get data from database'))
+    return res.send(Respon.Failed(500, 'Database Error'))
   }
 }
 
@@ -15,7 +16,7 @@ Product.search = async (req, res) => {
   try {
     let name = req.query.name
 
-    if (typeof (name) !== 'string' || name.length === 0) return res.send(Respon.Failed(400, 'name must be string'))
+    if (!Verifikasi.input(name, 'string')) return res.send(Respon.Failed(400, "invalid name, it must be a string and contain no symbol(', <, >)"))
 
     name = name.split(' ')
     const data = await Model.search(name)
@@ -31,11 +32,11 @@ Product.add = async (req, res) => {
   try {
     const { name, price, stock, imgLocation, category } = req.body
 
-    if (typeof (name) !== 'string') return res.send(Respon.Failed(400, 'name must be string'))
-    if (typeof (imgLocation) !== 'string') return res.send(Respon.Failed(400, 'imgLocation must be string'))
-    if (isNaN(parseInt(price))) return res.send(Respon.Failed(400, 'price must be number'))
-    if (isNaN(parseInt(stock))) return res.send(Respon.Failed(400, 'stock must be number'))
-    if (typeof (category) !== 'string') return res.send(Respon.Failed(400, 'category must be string'))
+    if (!Verifikasi.input(name, 'string')) return res.send(Respon.Failed(400, "invalid name, it must be a string and contain no symbol(', <, >)"))
+    if (!Verifikasi.input(imgLocation, 'string')) return res.send(Respon.Failed(400, "invalid imgLocation, it must be a string and contain no symbol(', <, >)"))
+    if (!Verifikasi.input(price, 'number')) return res.send(Respon.Failed(400, "invalid price, it must be a number and contain no symbol(', <, >)"))
+    if (!Verifikasi.input(stock, 'number')) return res.send(Respon.Failed(400, "invalid stock, it must be a number and contain no symbol(', <, >)"))
+    if (!Verifikasi.input(category, 'string')) return res.send(Respon.Failed(400, "invalid category, it must be a string and contain no symbol(', <, >)"))
 
     await Model.add(name, price, stock, imgLocation, category)
     return res.send(Respon.Succes(200, []))
@@ -49,14 +50,17 @@ Product.update = async (req, res) => {
     const id = req.params.id
     const { name, price, stock, imgLocation, category } = req.body
 
-    if (isNaN(parseInt(id))) return res.send(Respon.Failed(400, 'id must be number'))
-    if (typeof (name) !== 'string') return res.send(Respon.Failed(400, 'name must be string'))
-    if (typeof (imgLocation) !== 'string') return res.send(Respon.Failed(400, 'imgLocation must be string'))
-    if (isNaN(parseInt(price))) return res.send(Respon.Failed(400, 'price must be number'))
-    if (isNaN(parseInt(stock))) return res.send(Respon.Failed(400, 'stock must be number'))
-    if (typeof (category) !== 'string') return res.send(Respon.Failed(400, 'category must be string'))
+    if (!Verifikasi.input(id, 'number')) return res.send(Respon.Failed(400, "invalid id, it must be a number and contain no symbol(', <, >)"))
+    if (!Verifikasi.input(name, 'string')) return res.send(Respon.Failed(400, "invalid name, it must be a string and contain no symbol(', <, >)"))
+    if (!Verifikasi.input(imgLocation, 'string')) return res.send(Respon.Failed(400, "invalid imgLocation, it must be a string and contain no symbol(', <, >)"))
+    if (!Verifikasi.input(price, 'number')) return res.send(Respon.Failed(400, "invalid price, it must be a number and contain no symbol(', <, >)"))
+    if (!Verifikasi.input(stock, 'number')) return res.send(Respon.Failed(400, "invalid stock, it must be a number and contain no symbol(', <, >)"))
+    if (!Verifikasi.input(category, 'string')) return res.send(Respon.Failed(400, "invalid category, it must be a string and contain no symbol(', <, >)"))
 
-    await Model.update(id, name, price, stock, imgLocation, category)
+    const result = await Model.update(id, name, price, stock, imgLocation, category)
+
+    if (result.rowCount === 0) return res.send(Respon.Failed(400, `Product with id ${id} not found`))
+
     return res.send(Respon.Succes(200, []))
   } catch (err) {
     return res.send(Respon.Failed(500, 'cannot update produck, database error'))
@@ -67,9 +71,10 @@ Product.delete = async (req, res) => {
   try {
     const id = req.params.id
 
-    if (isNaN(parseInt(id))) return res.send(Respon.Failed(400, 'id must be number'))
+    if (!Verifikasi.input(id, 'number')) return res.send(Respon.Failed(400, "invalid id, it must be a number and contain no symbol(', <, >)"))
 
-    await Model.delete(id)
+    const result = await Model.delete(id)
+    if (result.rowCount === 0) return res.send(Respon.Failed(400, `Product with id ${id} not found`))
     return res.send(Respon.Succes(200, []))
   } catch (err) {
     return res.send(Respon.Failed(500, 'cannot delate data from database, database error'))

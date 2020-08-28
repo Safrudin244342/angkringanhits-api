@@ -40,7 +40,6 @@ Product.add = (name, price, stock, imgLocation, category) => {
         resolve(res)
       })
       .catch(err => {
-        console.log(err)
         reject(err)
       })
   })
