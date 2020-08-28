@@ -5,7 +5,7 @@ Verifikasi.input = (input, typeData) => {
 
   if (typeof input === 'undefined') return false
   if (input.length === 0) return false
-  if (badChar.some(badChar => input.indexOf(badChar) > 0)) return false
+  if (badChar.some(badChar => input.indexOf(badChar) >= 0)) return false
 
   if (typeData === 'string') {
     if (typeof (input) !== 'string') return false
