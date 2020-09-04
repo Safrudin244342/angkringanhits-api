@@ -4,6 +4,7 @@ const Server = express()
 const MyDb = require('./src/Config/Database')
 const bodyParser = require('body-parser')
 const Port = 3000
+const cors = require('cors')
 
 const log = (req, res, next) => {
   const user = req.headers['user-agent']
@@ -14,6 +15,7 @@ const log = (req, res, next) => {
   next()
 }
 
+Server.use(cors())
 Server.use(bodyParser.urlencoded({ extended: false }))
 Server.use(bodyParser.json())
 Server.use(log)
