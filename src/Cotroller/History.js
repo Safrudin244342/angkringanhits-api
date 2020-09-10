@@ -12,7 +12,9 @@ History.all = async (req, res) => {
       value.date = newDate
     })
 
-    return res.send(Respon.Succes(200, data))
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, data, token))
   } catch (err) {
     return res.send(Respon.Failed(500, 'Databse Error'))
   }
@@ -27,7 +29,10 @@ History.add = async (req, res) => {
     if (!Verifikasi.input(amount, 'number')) return res.send(Respon.Failed(400, "Invalid amount, it must be number and contain no symbol (', <, >)"))
 
     await Model.add(cashier, orders, amount)
-    return res.send(Respon.Succes(200, []))
+
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, [], token))
   } catch (err) {
     return res.send(Respon.Failed(500, 'Cannot add history, Database Error'))
   }
@@ -47,7 +52,9 @@ History.update = async (req, res) => {
 
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Cannot find history with id ${id}`))
 
-    return res.send(Respon.Succes(200, []))
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, [], token))
   } catch (err) {
     return res.send(Respon.Failed(500, 'Cannot update history, Database Error'))
   }
@@ -63,7 +70,9 @@ History.delete = async (req, res) => {
 
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Cannot find history with id ${id}`))
 
-    return res.send(Respon.Succes(200, []))
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, [], token))
   } catch (err) {
     return res.send(Respon.Failed(500, 'Cannot delete history, Database Error'))
   }
@@ -104,7 +113,9 @@ History.report = async (req, res) => {
       }
     }
 
-    return res.send(Respon.Succes(200, report))
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, report, token))
   } catch {
     return res.send(Respon.Failed(500, 'cannot get report from database'))
   }
@@ -121,7 +132,9 @@ History.getFor = async (req, res) => {
       value.date = newDate
     })
 
-    return res.send(Respon.Succes(200, data))
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, data, token))
   } catch {
     return res.send(Respon.Failed(500, 'cannot get list history'))
   }
@@ -155,7 +168,9 @@ History.allReport = async (req, res) => {
       }
     }
 
-    res.send(Respon.Succes(200, data))
+    const token = null
+    if (req.newToken) token = req.newToken
+    res.send(Respon.Succes(200, data, token))
   } catch (err){
     console.log(err)
     res.send(Respon.Failed(500, 'Database Error'))

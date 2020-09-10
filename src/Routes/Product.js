@@ -5,11 +5,11 @@ const Chace = require('../Middleware/Chace')
 const Upload = require('../Middleware/Upload')
 const Controller = require('../Cotroller/Product')
 
-Route.get('/', Validate, Chace, Controller.all)
-Route.post('/', Upload.single('image'), Controller.add)
-Route.put('/:id', Controller.update)
-Route.delete('/:id', Controller.delete)
-Route.get('/by/:sortBy/:action', Controller.sort)
-Route.get('/search', Controller.search)
+Route.get('/', Chace, Controller.all)
+Route.post('/', Validate.Admin, Upload.single('image'), Controller.add)
+Route.put('/:id', Validate.Admin, Controller.update)
+Route.delete('/:id', Validate.Admin, Controller.delete)
+Route.get('/by/:sortBy/:action', Chace, Controller.sort)
+Route.get('/search', Chace, Controller.search)
 
 module.exports = Route

@@ -20,7 +20,10 @@ Category.add = async (req, res) => {
     if (!Verifikasi.input(category, 'string')) return res.send(Respon.Failed(400, "invalid category, it must be string and contain no symbol (', <, >)"))
 
     await Model.add(category)
-    return res.send(Respon.Succes(200, []))
+
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, [], token))
   } catch (err) {
     console.log(err)
     return res.send(Respon.Failed(500, 'Cannot add category, Database Error'))
@@ -38,7 +41,10 @@ Category.update = async (req, res) => {
     const result = await Model.update(id, category)
 
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Category with id ${id} not found`))
-    return res.send(Respon.Succes(200, []))
+    
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, [], token))
   } catch (err) {
     return res.send(Respon.Failed(500, 'Cannot update category, Database Error'))
   }
@@ -53,7 +59,10 @@ Category.delete = async (req, res) => {
     const result = await Model.delete(id)
 
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Category with id ${id} not found`))
-    return res.send(Respon.Succes(200, []))
+    
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, [], token))
   } catch (err) {
     return res.send(Respon.Failed(500, 'Cannot delete category, Database Error'))
   }

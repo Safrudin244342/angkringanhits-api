@@ -1,11 +1,12 @@
 const Respon = {}
 
-Respon.Succes = (code, values) => {
+Respon.Succes = (code, values, token) => {
   const res = {
     code: code,
     values: values,
     success: true,
     error: false,
+    token: (token || null),
     errMsg: null
   }
 
@@ -18,6 +19,7 @@ Respon.Failed = (code, msg) => {
     values: [],
     success: false,
     error: true,
+    token: null,
     errMsg: msg
   }
 

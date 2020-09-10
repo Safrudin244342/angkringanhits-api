@@ -8,6 +8,7 @@ Product.all = async (req, res) => {
   try {
     const data = await Model.getAll()
     RedisDB.client.setex('productAll', 60, JSON.stringify(data))
+    
     return res.send(Respon.Succes(200, data))
   } catch (error) {
     return res.send(Respon.Failed(500, 'Database Error'))
@@ -42,7 +43,10 @@ Product.add = async (req, res) => {
     if (!Verifikasi.input(category, 'string')) return res.send(Respon.Failed(400, "invalid category, it must be a string and contain no symbol(', <, >)"))
 
     await Model.add(name, price, stock, imgLocation, category)
-    return res.send(Respon.Succes(200, []))
+
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, [], token))
   } catch (err) {
     return res.send(Respon.Failed(500, 'cannot add data to database, database error'))
   }
@@ -64,7 +68,9 @@ Product.update = async (req, res) => {
 
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Product with id ${id} not found`))
 
-    return res.send(Respon.Succes(200, []))
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, [], token))
   } catch (err) {
     return res.send(Respon.Failed(500, 'cannot update produck, database error'))
   }
@@ -78,7 +84,9 @@ Product.delete = async (req, res) => {
 
     const result = await Model.delete(id)
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Product with id ${id} not found`))
-    return res.send(Respon.Succes(200, []))
+    const token = null
+    if (req.newToken) token = req.newToken
+    return res.send(Respon.Succes(200, [], token))
   } catch (err) {
     return res.send(Respon.Failed(500, 'cannot delate data from database, database error'))
   }

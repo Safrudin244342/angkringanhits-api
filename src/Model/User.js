@@ -1,6 +1,5 @@
 const Bcrypt = require('../Helper/Hash')
 const MyDB = require('../Config/Database')
-const MyDb = require('../Config/Database')
 const user = {}
 
 user.addUser = (username, password, rule) => {

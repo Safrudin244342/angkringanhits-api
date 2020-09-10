@@ -13,12 +13,11 @@ Token.Refrash = async (req) => {
   const dataDb = await ModelUser.getToken(user)
   if (dataDb.length <= 0) return false
   
-  const checkToken = await Bcrypt.compare(tokenReq, dataDb[0].token)
-  console.log(checkToken)
-  console.log(dataDb[0].token)
+  const checkToken = await Bcrypt.compare(tokenReq, (dataDb[0].token || ''))
   if (!checkToken) return false
   
   const { rule } = dataDb
+  
   const payload = {
     user,
     rule
@@ -33,16 +32,17 @@ Token.Refrash = async (req) => {
   return true
 }
 
-const checkToken = (req, res, next) => {
+Token.Admin = (req, res, next) => {
   const token = req.headers.token
 
   if (!token) return res.send(Respon.Failed(401, 'kamu belum login'))
 
-  const { role } = jwtDecode(token)
+  const { rule } = jwtDecode(token)
+  if (rule !== 'admin') return res.send(Respon.Failed(401, `you don't have permission`))
 
   JWT.verify(token, (process.env.JWT_KEY || 'safrudin'), async (err, decode) => {
     if (err) {
-      if (err.message !== 'jwt expired') return res.send(Respon.Failed(401, err.message)) 
+      if (err.message !== 'jwt expired') return res.send(Respon.Failed(401, err.message))
       const newToken = await Token.Refrash(req)
       if (!newToken) return res.send(Respon.Failed(401, 'token invalid'))
     }
@@ -51,4 +51,23 @@ const checkToken = (req, res, next) => {
   })
 }
 
-module.exports = checkToken
+Token.user = (req, res, next) => {
+  const token = req.headers.token
+
+  if (!token) return res.send(Respon.Failed(401, 'kamu belum login'))
+
+  const { rule } = jwtDecode(token)
+  if (rule !== 'user' || rule === 'admin') return res.send(Respon.Failed(401, `you don't have permission`))
+
+  JWT.verify(token, (process.env.JWT_KEY || 'safrudin'), async (err, decode) => {
+    if (err) {
+      if (err.message !== 'jwt expired') return res.send(Respon.Failed(401, err.message))
+      const newToken = await Token.Refrash(req)
+      if (!newToken) return res.send(Respon.Failed(401, 'token invalid'))
+    }
+    
+    next()
+  })
+}
+
+module.exports = Token

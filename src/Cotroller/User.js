@@ -31,7 +31,7 @@ user.auth = async (req, res) => {
     if (check) {
       const payload = {
         user: username,
-        role: passDB[0].role
+        rule: passDB[0].rule
       }
 
       const token = JWT.sign(payload, (process.env.JWT_KEY || 'safrudin'), { expiresIn: 60 })
