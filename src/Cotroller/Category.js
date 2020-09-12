@@ -21,7 +21,7 @@ Category.add = async (req, res) => {
 
     await Model.add(category)
 
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, [], token))
   } catch (err) {
@@ -42,7 +42,7 @@ Category.update = async (req, res) => {
 
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Category with id ${id} not found`))
     
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, [], token))
   } catch (err) {
@@ -60,7 +60,7 @@ Category.delete = async (req, res) => {
 
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Category with id ${id} not found`))
     
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, [], token))
   } catch (err) {

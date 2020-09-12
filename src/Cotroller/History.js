@@ -12,10 +12,11 @@ History.all = async (req, res) => {
       value.date = newDate
     })
 
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, data, token))
   } catch (err) {
+    console.log(err)
     return res.send(Respon.Failed(500, 'Databse Error'))
   }
 }
@@ -30,7 +31,7 @@ History.add = async (req, res) => {
 
     await Model.add(cashier, orders, amount)
 
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, [], token))
   } catch (err) {
@@ -52,7 +53,7 @@ History.update = async (req, res) => {
 
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Cannot find history with id ${id}`))
 
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, [], token))
   } catch (err) {
@@ -70,7 +71,7 @@ History.delete = async (req, res) => {
 
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Cannot find history with id ${id}`))
 
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, [], token))
   } catch (err) {
@@ -113,7 +114,7 @@ History.report = async (req, res) => {
       }
     }
 
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, report, token))
   } catch {
@@ -132,7 +133,7 @@ History.getFor = async (req, res) => {
       value.date = newDate
     })
 
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, data, token))
   } catch {
@@ -168,7 +169,7 @@ History.allReport = async (req, res) => {
       }
     }
 
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     res.send(Respon.Succes(200, data, token))
   } catch (err){

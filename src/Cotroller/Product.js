@@ -44,7 +44,7 @@ Product.add = async (req, res) => {
 
     await Model.add(name, price, stock, imgLocation, category)
 
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, [], token))
   } catch (err) {
@@ -68,7 +68,7 @@ Product.update = async (req, res) => {
 
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Product with id ${id} not found`))
 
-    const token = null
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, [], token))
   } catch (err) {
@@ -84,7 +84,8 @@ Product.delete = async (req, res) => {
 
     const result = await Model.delete(id)
     if (result.rowCount === 0) return res.send(Respon.Failed(400, `Product with id ${id} not found`))
-    const token = null
+    
+    let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, [], token))
   } catch (err) {
