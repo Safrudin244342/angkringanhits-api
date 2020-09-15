@@ -46,4 +46,22 @@ user.getToken = async (user) => {
   })
 }
 
+user.remUserBy = async (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = `DELETE FROM "user" WHERE id=${id}`
+    MyDB.query(sql)
+      .then(res => resolve(res.rows))
+      .catch(err => reject(err))
+  })
+}
+
+user.getAll = async () => {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT id,username,rule FROM "user"`
+    MyDB.query(sql)
+      .then(res => resolve(res.rows))
+      .catch(err => reject(err))
+  })
+}
+
 module.exports = user

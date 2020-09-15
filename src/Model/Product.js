@@ -83,4 +83,20 @@ Product.sort = (sortBy, action) => {
   })
 }
 
+Product.getImage = (id) => {
+  return new Promise((resolve, reject) => {
+    MyDB.query(`SELECT "imgLocation" FROM product WHERE id=${id}`)
+      .then(res => {
+        try {
+          resolve(res.rows[0].imgLocation)
+        } catch (err) {
+          reject(err)
+        }
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
 module.exports = Product

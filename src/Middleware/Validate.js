@@ -2,6 +2,7 @@ const Respon = require('../Config/Respon')
 const ModelUser = require('../Model/User')
 const JWT = require('jsonwebtoken')
 const jwtDecode = require('jwt-decode')
+const ObjectHash = require('object-hash')
 const Hash = require('../Helper/Hash')
 const Bcrypt = require('bcrypt')
 
@@ -13,10 +14,10 @@ Token.Refrash = async (req) => {
   const dataDb = await ModelUser.getToken(user)
   if (dataDb.length <= 0) return false
   
-  const checkToken = await Bcrypt.compare(tokenReq, (dataDb[0].token || ''))
+  const checkToken = ObjectHash(tokenReq) === dataDb[0].token
   if (!checkToken) return false
   
-  const { rule } = dataDb
+  const { rule } = dataDb[0]
   
   const payload = {
     user,
@@ -24,7 +25,7 @@ Token.Refrash = async (req) => {
   }
 
   const newToken = JWT.sign(payload, (process.env.JWT_KEY || 'safrudin'), { expiresIn: 60 })
-  const newHashToken = await Hash(newToken)
+  const newHashToken = ObjectHash(newToken)
 
   await ModelUser.setToken(newHashToken, user)
   req.newToken = newToken
@@ -55,9 +56,6 @@ Token.user = (req, res, next) => {
   const token = req.headers.token
 
   if (!token) return res.send(Respon.Failed(401, 'kamu belum login'))
-
-  const { rule } = jwtDecode(token)
-  if (rule !== 'user' || rule === 'admin') return res.send(Respon.Failed(401, `you don't have permission`))
 
   JWT.verify(token, (process.env.JWT_KEY || 'safrudin'), async (err, decode) => {
     if (err) {

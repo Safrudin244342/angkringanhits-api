@@ -1,4 +1,5 @@
 const Respon = require('../Config/Respon')
+const RedisDB = require('../Config/RedisDB')
 const Model = require('../Model/History')
 const Verifikasi = require('../Helper/Verifikasi')
 const History = {}
@@ -11,6 +12,8 @@ History.all = async (req, res) => {
       newDate = `${newDate[2]} ${newDate[1]} ${newDate[3]}`
       value.date = newDate
     })
+
+    RedisDB.client.setex(`history${req.url}`, 60, JSON.stringify(data))
 
     let token = null
     if (req.newToken) token = req.newToken
@@ -114,6 +117,8 @@ History.report = async (req, res) => {
       }
     }
 
+    RedisDB.client.setex(`history${req.url}`, 60, JSON.stringify(report))
+
     let token = null
     if (req.newToken) token = req.newToken
     return res.send(Respon.Succes(200, report, token))
@@ -132,6 +137,8 @@ History.getFor = async (req, res) => {
       newDate = `${newDate[2]} ${newDate[1]} ${newDate[3]}`
       value.date = newDate
     })
+
+    RedisDB.client.setex(`history${req.url}`, 60, JSON.stringify(data))
 
     let token = null
     if (req.newToken) token = req.newToken
@@ -168,6 +175,8 @@ History.allReport = async (req, res) => {
         amount: lastAmount.reverse()
       }
     }
+
+    RedisDB.client.setex(`history${req.url}`, 60, JSON.stringify(data))
 
     let token = null
     if (req.newToken) token = req.newToken
