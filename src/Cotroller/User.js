@@ -13,9 +13,9 @@ user.getAll = async (req, res) => {
     const data = await model.getAll()
     RedisDB.client.setex(`user${req.url}`, 60, JSON.stringify(data))
     
-    return res.send(Respon.Succes(200, data))
+    return Respon(req, res, {code: 200, values: data, success:true})
   } catch (error) {
-    return res.send(Respon.Failed(500, 'Database Error'))
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the get all function'), error:true})
   }
 }
 
@@ -23,17 +23,15 @@ user.addUser = async (req, res) => {
   try {
     const { username, password, rule } = req.body
 
-    if (!Verifikasi.input(username, 'string')) return res.send(Respon.Failed(400, "invalid username, it must be a string and contain no symbol(', <, >)"))
-    if (!Verifikasi.input(password, 'string')) return res.send(Respon.Failed(400, "invalid password, it must be a string and contain no symbol(', <, >)"))
-    if (!Verifikasi.input(rule, 'string')) return res.send(Respon.Failed(400, "invalid rule, it must be a string and contain no symbol(', <, >)"))
-
+    if (!Verifikasi.input(username, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid username, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(password, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid password, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(rule, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid rule, it must be a string and contain no symbol(', <, >)", error:true})
     const passwordHash = await Hash(password)
 
     await model.addUser(username, passwordHash, rule)
-    return res.send(Respon.Succes(200, []))
-  } catch (err) {
-    console.warn(err)
-    return res.send(Respon.Failed(500, 'cannot add data to database, database error'))
+    return Respon(req, res, {code: 200, success:true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the addUser function'), error:true})
   }
 }
 
@@ -42,14 +40,12 @@ user.remUser = async (req, res) => {
     const id = req.params.id
 
     const result = await model.remUserBy(id)
-    if (result.rowCount === 0) return res.send(Respon.Failed(400, `User with id ${id} not found`))
+    console.log(result.rowCount)
+    if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`User with id ${id} not found`, error:true})
 
-    let token = null
-    if (req.newToken) token = req.newToken
-    return res.send(Respon.Succes(200, [], token))
-  } catch (err) {
-    console.log(err)
-    return res.send(Respon.Failed(500, 'cannot del data to database, database error'))
+    return Respon(req, res, {code: 200, success:true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the remUser function'), error:true})
   }
 }
 
@@ -58,34 +54,29 @@ user.auth = async (req, res) => {
     const username = req.body.username
     const passReq = req.body.password
 
-    if (!Verifikasi.input(username, 'string')) return res.send(Respon.Failed(400, "invalid username, it must be a string and contain no symbol(', <, >)"))
-    if (!Verifikasi.input(passReq, 'string')) return res.send(Respon.Failed(400, "invalid password, it must be a string and contain no symbol(', <, >)"))
-    
+    if (!Verifikasi.input(username, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid username, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(passReq, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid password, it must be a string and contain no symbol(', <, >)", error:true})    
     
     const passDB = await model.getByUsername(username)
-    if (passDB.length === 0) return res.send(Respon.Failed(401, 'username atau password salah'))
+    if (passDB.length === 0) return Respon(req, res, {code: 200, errMsg:'Username atau Password salah', error:true})
 
     const check = await Bcrypt.compare(passReq, passDB[0].password)
 
-    if (!check) return res.send(Respon.Failed(401, 'username atau password salah'))
+    if (!check) return Respon(req, res, {code: 200, errMsg:'Username atau Password salah', error:true})
 
-    if (check) {
-      const payload = {
-        user: username,
-        rule: passDB[0].rule
-      }
-
-      const token = JWT.sign(payload, (process.env.JWT_KEY || 'safrudin'), { expiresIn: 60 })
-      const hashToken = ObjectHash(token)
-
-      await model.setToken(hashToken, username)
-
-      return res.send(Respon.Succes(200, [{token}]))
-    } else {
-      return res.send(Respon.Failed(401, 'cannot login'))
+    const payload = {
+      user: username,
+      rule: passDB[0].rule
     }
-  } catch (err) {
-    return res.send(Respon.Failed(500, err))
+
+    const token = JWT.sign(payload, (process.env.JWT_KEY || 'safrudin'), { expiresIn: 60 })
+    const hashToken = ObjectHash(token)
+
+    await model.setToken(hashToken, username)
+
+    return Respon(req, res, {code: 200, values:[{token}], success:true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the auth function'), error:true})
   }
 }
 

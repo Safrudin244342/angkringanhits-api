@@ -36,16 +36,16 @@ Token.Refrash = async (req) => {
 Token.Admin = (req, res, next) => {
   const token = req.headers.token
 
-  if (!token) return res.send(Respon.Failed(401, 'kamu belum login'))
+  if (!token) return Respon(req, res, {code: 400, errMsg:'kamu belum login', error:true})
 
   const { rule } = jwtDecode(token)
-  if (rule !== 'admin') return res.send(Respon.Failed(401, `you don't have permission`))
+  if (rule !== 'admin') return Respon(req, res, {code: 400, errMsg:"you don't have permission", error:true})
 
-  JWT.verify(token, (process.env.JWT_KEY || 'safrudin'), async (err, decode) => {
-    if (err) {
-      if (err.message !== 'jwt expired') return res.send(Respon.Failed(401, err.message))
+  JWT.verify(token, (process.env.JWT_KEY || 'safrudin'), async (error, decode) => {
+    if (error) {
+      if (error.message !== 'jwt expired') return Respon(req, res, {code: 500, errMsg:(error.message || 'token invalid'), error:true})
       const newToken = await Token.Refrash(req)
-      if (!newToken) return res.send(Respon.Failed(401, 'token invalid'))
+      if (!newToken) return Respon(req, res, {code: 500, errMsg:'token invalid', error:true})
     }
     
     next()
@@ -55,13 +55,13 @@ Token.Admin = (req, res, next) => {
 Token.user = (req, res, next) => {
   const token = req.headers.token
 
-  if (!token) return res.send(Respon.Failed(401, 'kamu belum login'))
+  if (!token) return Respon(req, res, {code: 400, errMsg:'kamu belum login', error:true})
 
-  JWT.verify(token, (process.env.JWT_KEY || 'safrudin'), async (err, decode) => {
-    if (err) {
-      if (err.message !== 'jwt expired') return res.send(Respon.Failed(401, err.message))
+  JWT.verify(token, (process.env.JWT_KEY || 'safrudin'), async (error, decode) => {
+    if (error) {
+      if (error.message !== 'jwt expired') return Respon(req, res, {code: 500, errMsg:(error.message || 'token invalid'), error:true})
       const newToken = await Token.Refrash(req)
-      if (!newToken) return res.send(Respon.Failed(401, 'token invalid'))
+      if (!newToken) return Respon(req, res, {code: 500, errMsg:'token invalid', error:true})
     }
     
     next()

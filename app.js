@@ -21,7 +21,7 @@ Server.use(cors())
 Server.use(bodyParser.urlencoded({ extended: false }))
 Server.use(bodyParser.json())
 Server.use(log)
-Server.use(Routes)
+Server.use("/api", Routes)
 
 Server.use("", express.static('public'))
 

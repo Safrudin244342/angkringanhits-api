@@ -15,12 +15,9 @@ History.all = async (req, res) => {
 
     RedisDB.client.setex(`history${req.url}`, 60, JSON.stringify(data))
 
-    let token = null
-    if (req.newToken) token = req.newToken
-    return res.send(Respon.Succes(200, data, token))
-  } catch (err) {
-    console.log(err)
-    return res.send(Respon.Failed(500, 'Databse Error'))
+    return Respon(req, res, {code: 200, values: data, success:true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the get all function'), error:true})
   }
 }
 
@@ -28,17 +25,15 @@ History.add = async (req, res) => {
   try {
     const { cashier, orders, amount } = req.body
 
-    if (!Verifikasi.input(cashier, 'string')) return res.send(Respon.Failed(400, "Invalid cashier, it must be string and contain no symbol (', <, >)"))
-    if (!Verifikasi.input(orders, 'string')) return res.send(Respon.Failed(400, "Invalid orders, it must be string and contain no symbol (', <, >)"))
-    if (!Verifikasi.input(amount, 'number')) return res.send(Respon.Failed(400, "Invalid amount, it must be number and contain no symbol (', <, >)"))
+    if (!Verifikasi.input(cashier, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid cashier, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(orders, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid order, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(amount, 'number')) return Respon(req, res, {code: 200, errMsg:"invalid amount, it must be a number and contain no symbol(', <, >)", error:true})
 
     await Model.add(cashier, orders, amount)
 
-    let token = null
-    if (req.newToken) token = req.newToken
-    return res.send(Respon.Succes(200, [], token))
-  } catch (err) {
-    return res.send(Respon.Failed(500, 'Cannot add history, Database Error'))
+    return Respon(req, res, {code: 200, success:true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the add function'), error:true})
   }
 }
 
@@ -47,20 +42,18 @@ History.update = async (req, res) => {
     const id = req.params.id
     const { cashier, orders, amount } = req.body
 
-    if (!Verifikasi.input(id, 'number')) return res.send(Respon.Failed(400, "Invalid id, it must be number and contain no symbol (', <, >)"))
-    if (!Verifikasi.input(cashier, 'string')) return res.send(Respon.Failed(400, "Invalid cashier, it must be string and contain no symbol (', <, >)"))
-    if (!Verifikasi.input(orders, 'string')) return res.send(Respon.Failed(400, "Invalid orders, it must be string and contain no symbol (', <, >)"))
-    if (!Verifikasi.input(amount, 'number')) return res.send(Respon.Failed(400, "Invalid amount, it must be number and contain no symbol (', <, >)"))
+    if (!Verifikasi.input(id, 'number')) return Respon(req, res, {code: 200, errMsg:"invalid id, it must be a number and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(cashier, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid cashier, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(orders, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid order, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(amount, 'number')) return Respon(req, res, {code: 200, errMsg:"invalid amount, it must be a number and contain no symbol(', <, >)", error:true})
 
     const result = await Model.update(id, cashier, orders, amount)
 
-    if (result.rowCount === 0) return res.send(Respon.Failed(400, `Cannot find history with id ${id}`))
+    if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`history with id ${id} not found`, error:true})
 
-    let token = null
-    if (req.newToken) token = req.newToken
-    return res.send(Respon.Succes(200, [], token))
-  } catch (err) {
-    return res.send(Respon.Failed(500, 'Cannot update history, Database Error'))
+    return Respon(req, res, {code: 200, success:true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the update function'), error:true})
   }
 }
 
@@ -68,17 +61,15 @@ History.delete = async (req, res) => {
   try {
     const id = req.params.id
 
-    if (!Verifikasi.input(id, 'number')) return res.send(Respon.Failed(400, "Invalid id, it must be number and contain no symbol (', <, >)"))
+    if (!Verifikasi.input(id, 'number')) return Respon(req, res, {code: 200, errMsg:"invalid id, it must be a number and contain no symbol(', <, >)", error:true})
 
     const result = await Model.delete(id)
 
-    if (result.rowCount === 0) return res.send(Respon.Failed(400, `Cannot find history with id ${id}`))
+    if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`history with id ${id} not found`, error:true})
 
-    let token = null
-    if (req.newToken) token = req.newToken
-    return res.send(Respon.Succes(200, [], token))
-  } catch (err) {
-    return res.send(Respon.Failed(500, 'Cannot delete history, Database Error'))
+    return Respon(req, res, {code: 200, success:true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the delete function'), error:true})
   }
 }
 
@@ -119,11 +110,9 @@ History.report = async (req, res) => {
 
     RedisDB.client.setex(`history${req.url}`, 60, JSON.stringify(report))
 
-    let token = null
-    if (req.newToken) token = req.newToken
-    return res.send(Respon.Succes(200, report, token))
-  } catch {
-    return res.send(Respon.Failed(500, 'cannot get report from database'))
+    return Respon(req, res, {code: 200, values:report, success:true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the report function'), error:true})
   }
 }
 
@@ -140,11 +129,9 @@ History.getFor = async (req, res) => {
 
     RedisDB.client.setex(`history${req.url}`, 60, JSON.stringify(data))
 
-    let token = null
-    if (req.newToken) token = req.newToken
-    return res.send(Respon.Succes(200, data, token))
-  } catch {
-    return res.send(Respon.Failed(500, 'cannot get list history'))
+    return Respon(req, res, {code: 200, values:data, success:true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the getfor function'), error:true})
   }
 }
 
@@ -178,12 +165,10 @@ History.allReport = async (req, res) => {
 
     RedisDB.client.setex(`history${req.url}`, 60, JSON.stringify(data))
 
-    let token = null
-    if (req.newToken) token = req.newToken
-    res.send(Respon.Succes(200, data, token))
-  } catch (err){
-    console.log(err)
-    res.send(Respon.Failed(500, 'Database Error'))
+    return Respon(req, res, {code: 200, values:data, success:true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the allReport function'), error:true})
+
   }
 }
 

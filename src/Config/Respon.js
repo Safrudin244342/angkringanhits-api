@@ -1,29 +1,16 @@
-const Respon = {}
+const Respon = (req, res, value) => {
+  const token = (req.newToken || null)
 
-Respon.Succes = (code, values, token) => {
-  const res = {
-    code: code,
-    values: values,
-    success: true,
-    error: false,
-    token: (token || null),
-    errMsg: null
+  const resSend = {
+    code: (value.code || 200),
+    values: (value.values || null),
+    success: (value.success || false),
+    error: (value.error || false),
+    token: token,
+    errMsg: (value.errMsg || null)
   }
-
-  return res
-}
-
-Respon.Failed = (code, msg) => {
-  const res = {
-    code: code,
-    values: [],
-    success: false,
-    error: true,
-    token: null,
-    errMsg: msg
-  }
-
-  return res
+  
+  return res.send(resSend)
 }
 
 module.exports = Respon

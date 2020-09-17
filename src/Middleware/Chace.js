@@ -3,37 +3,28 @@ const Respon = require('../Config/Respon')
 const Chace = {}
 
 Chace.product = (req, resS, next) => {
-  RedisDB.client.get(`product${req.url}`, (err, resR) => {
-    if (err) return resS.send(Respon.Failed(500, {err}))
+  RedisDB.client.get(`product${req.url}`, (error, resR) => {
+    if (error) return Respon(req, resS, {code: 500, errMsg:(error.message || 'cannot connect with redis'), error:true})
 
-    let token = null
-    if (req.newToken) token = req.newToken
-
-    if (resR !== null) return resS.send(Respon.Succes(200, JSON.parse(resR), token))
+    if (resR !== null) return Respon(req, resS, {code: 200, values: JSON.parse(resR), success:true})
     next()
   })
 }
 
 Chace.history = (req, resS, next) => {
   RedisDB.client.get(`history${req.url}`, (err, resR) => {
-    if (err) return resS.send(Respon.Failed(500, {err}))
+    if (err) return Respon(req, resS, {code: 500, errMsg:(error.message || 'cannot connect with redis'), error:true})
 
-    let token = null
-    if (req.newToken) token = req.newToken
-
-    if (resR !== null) return resS.send(Respon.Succes(200, JSON.parse(resR), token))
+    if (resR !== null) return Respon(req, resS, {code: 200, values: JSON.parse(resR), success:true})
     next()
   })
 }
 
 Chace.user = (req, resS, next) => {
   RedisDB.client.get(`user${req.url}`, (err, resR) => {
-    if (err) return resS.send(Respon.Failed(500, {err}))
+    if (err) return Respon(req, resS, {code: 500, errMsg:(error.message || 'cannot connect with redis'), error:true})
 
-    let token = null
-    if (req.newToken) token = req.newToken
-
-    if (resR !== null) return resS.send(Respon.Succes(200, JSON.parse(resR), token))
+    if (resR !== null) return Respon(req, resS, {code: 200, values: JSON.parse(resR), success:true})
     next()
   })
 }

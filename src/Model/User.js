@@ -1,4 +1,3 @@
-const Bcrypt = require('../Helper/Hash')
 const MyDB = require('../Config/Database')
 const user = {}
 
@@ -50,7 +49,7 @@ user.remUserBy = async (id) => {
   return new Promise((resolve, reject) => {
     const sql = `DELETE FROM "user" WHERE id=${id}`
     MyDB.query(sql)
-      .then(res => resolve(res.rows))
+      .then(res => resolve(res))
       .catch(err => reject(err))
   })
 }
