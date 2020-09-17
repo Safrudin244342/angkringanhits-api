@@ -31,6 +31,8 @@ History.add = async (req, res) => {
 
     await Model.add(cashier, orders, amount)
 
+    RedisDB.client.select(1)
+    RedisDB.client.flushdb()
     return Respon(req, res, {code: 200, success:true})
   } catch (error) {
     return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the add function'), error:true})
@@ -51,6 +53,8 @@ History.update = async (req, res) => {
 
     if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`history with id ${id} not found`, error:true})
 
+    RedisDB.client.select(1)
+    RedisDB.client.flushdb()
     return Respon(req, res, {code: 200, success:true})
   } catch (error) {
     return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the update function'), error:true})
@@ -66,6 +70,9 @@ History.delete = async (req, res) => {
     const result = await Model.delete(id)
 
     if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`history with id ${id} not found`, error:true})
+
+    RedisDB.client.select(1)
+    RedisDB.client.flushdb()
 
     return Respon(req, res, {code: 200, success:true})
   } catch (error) {

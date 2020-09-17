@@ -3,6 +3,7 @@ const Respon = require('../Config/Respon')
 const Chace = {}
 
 Chace.product = (req, resS, next) => {
+  RedisDB.client.select(0)
   RedisDB.client.get(`product${req.url}`, (error, resR) => {
     if (error) return Respon(req, resS, {code: 500, errMsg:(error.message || 'cannot connect with redis'), error:true})
 
@@ -12,6 +13,7 @@ Chace.product = (req, resS, next) => {
 }
 
 Chace.history = (req, resS, next) => {
+  RedisDB.client.select(1)
   RedisDB.client.get(`history${req.url}`, (err, resR) => {
     if (err) return Respon(req, resS, {code: 500, errMsg:(error.message || 'cannot connect with redis'), error:true})
 
@@ -21,6 +23,7 @@ Chace.history = (req, resS, next) => {
 }
 
 Chace.user = (req, resS, next) => {
+  RedisDB.client.select(2)
   RedisDB.client.get(`user${req.url}`, (err, resR) => {
     if (err) return Respon(req, resS, {code: 500, errMsg:(error.message || 'cannot connect with redis'), error:true})
 

@@ -29,6 +29,10 @@ user.addUser = async (req, res) => {
     const passwordHash = await Hash(password)
 
     await model.addUser(username, passwordHash, rule)
+
+    RedisDB.client.select(2)
+    RedisDB.client.flushdb()
+
     return Respon(req, res, {code: 200, success:true})
   } catch (error) {
     return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the addUser function'), error:true})
@@ -42,6 +46,9 @@ user.remUser = async (req, res) => {
     const result = await model.remUserBy(id)
     console.log(result.rowCount)
     if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`User with id ${id} not found`, error:true})
+
+    RedisDB.client.select(2)
+    RedisDB.client.flushdb()
 
     return Respon(req, res, {code: 200, success:true})
   } catch (error) {

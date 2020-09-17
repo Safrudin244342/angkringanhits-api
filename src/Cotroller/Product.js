@@ -49,7 +49,8 @@ Product.add = async (req, res) => {
 
     await Model.add(name, price, stock, imgLocation, category)
 
-    RedisDB.client.del('product/')
+    RedisDB.client.select(0)
+    RedisDB.client.flushdb()
 
     return Respon(req, res, {code: 200, success:true})
   } catch (error) {
@@ -79,7 +80,9 @@ Product.update = async (req, res) => {
 
     if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`product with id ${id} not found`, error:true})
 
-    RedisDB.client.del('product/')
+    RedisDB.client.select(0)
+    RedisDB.client.flushdb()
+
     return Respon(req, res, {code: 200, success:true})
   } catch (error) {
     return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the update function'), error:true})
@@ -95,7 +98,8 @@ Product.delete = async (req, res) => {
     const result = await Model.delete(id)
     if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`product with id ${id} not found`, error:true})
 
-    RedisDB.client.del('product/')
+    RedisDB.client.select(0)
+    RedisDB.client.flushdb()
 
     return Respon(req, res, {code: 200, success:true})
   } catch (error) {
