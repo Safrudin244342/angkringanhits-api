@@ -1,10 +1,10 @@
 const Pool = require('pg-pool')
 
 const MyDb = new Pool({
-  user: 'beningpostgresdb',
-  database: 'angkringanhits',
-  password: 'Karyaanakdesa632',
-  host: 'localhost'
+  user: (process.env.POSTGRE_USER || 'root'),
+  database: (process.env.POSTGRE_DB || 'postgres'),
+  password: (process.env.POSTGRE_PASSWORD || ''),
+  host: (process.env.POSTGRE_HOST || 'localhost')
 })
 
 module.exports = MyDb
