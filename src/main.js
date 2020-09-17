@@ -12,7 +12,7 @@ Routes.use('/category', Category)
 Routes.use('/user', User)
 
 Routes.get('/', (req, res) => {
-  res.send(Respon.Succes(200, []))
+  return Respon(req, res, {code: 200, success:true})
 })
 
 module.exports = Routes
