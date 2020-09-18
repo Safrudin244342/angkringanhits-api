@@ -23,7 +23,7 @@ Server.use(bodyParser.json())
 Server.use(log)
 Server.use("/api", Routes)
 
-Server.use("", express.static('public'))
+Server.use("/public", express.static('public'))
 
 MyDb.connect()
   .then(res => {

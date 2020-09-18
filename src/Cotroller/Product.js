@@ -2,6 +2,8 @@ const Model = require('../Model/Product')
 const RedisDB = require('../Config/RedisDB')
 const Respon = require('../Config/Respon')
 const Verifikasi = require('../Helper/Verifikasi')
+const cloudinary = require('../Config/Cloudinary')
+const fs = require('fs')
 const Product = {}
 
 Product.all = async (req, res) => {
@@ -37,9 +39,15 @@ Product.add = async (req, res) => {
     if (!req.file) return res.send(Respon.Failed(400, "invalid image, image must be a image"))
     
     let imgLocation = req.file.path
-    imgLocation = imgLocation.split('/')
-    imgLocation.shift()
-    imgLocation = imgLocation.join('/')
+    await cloudinary.uploader.upload(imgLocation, { tag: 'product' }, (err, image) => {
+      if (err) return Respon(req, res, {code: 400, errMsg:err, error:true})
+      imgLocation = image.url
+      imageid = image.public_id
+    })
+
+    fs.unlink(req.file.path, err => console.log(err))
+
+    if (imgLocation === req.file.path) imgLocation = `${process.env.APP_HOST}/${imgLocation}`
 
     if (!Verifikasi.input(name, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid name, it must be a string and contain no symbol(', <, >)", error:true})
     if (!Verifikasi.input(imgLocation, 'string')) return Respon(req, res, {code: 400, errMsg:'invalid image, it must be a image file', error:true})
@@ -47,12 +55,20 @@ Product.add = async (req, res) => {
     if (!Verifikasi.input(stock, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid stock, it must be a number and contain no symbol(', <, >)", error:true})
     if (!Verifikasi.input(category, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid category, it must be a string and contain no symbol(', <, >)", error:true})
 
-    await Model.add(name, price, stock, imgLocation, category)
+    await Model.add(name, price, stock, imgLocation, category, imageid)
 
     RedisDB.client.select(0)
     RedisDB.client.flushdb()
 
-    return Respon(req, res, {code: 200, success:true})
+    const data = {
+      name,
+      image: imgLocation,
+      price,
+      stock,
+      category
+    }
+
+    return Respon(req, res, {code: 200, values: [data], success:true})
   } catch (error) {
     return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the add function'), error:true})
   }
@@ -63,10 +79,27 @@ Product.update = async (req, res) => {
     const id = req.params.id
     const { name, price, stock, category } = req.body
     let imgLocation
+    let imageid
+    
     try {
-      imgLocation = req.file ? req.file.path:await Model.getImage(id)
+      dbImage = await Model.getImage(id)
     } catch (err) {
       return Respon(req, res, {code: 200, errMsg:`product with id ${id} not found`, error:true})
+    }
+
+    if (req.file) {
+      imgLocation = req.file.path
+      await cloudinary.uploader.upload(imgLocation, { tag: 'product' }, (err, image) => {
+        if (err) return Respon(req, res, {code: 400, errMsg:err, error:true})
+        imgLocation = image.url
+        imageid = image.public_id
+      })
+
+      cloudinary.uploader.destroy(dbImage.imageid)
+      fs.unlink(req.file.path, err => console.log(err))
+    } else {
+      imgLocation = dbImage.imgLocation
+      imageid = dbImage.imageid
     }
 
     if (!Verifikasi.input(id, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid id, it must be a number and contain no symbol(', <, >)", error:true})
@@ -76,15 +109,24 @@ Product.update = async (req, res) => {
     if (!Verifikasi.input(stock, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid stock, it must be a number and contain no symbol(', <, >)", error:true})
     if (!Verifikasi.input(category, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid category, it must be a string and contain no symbol(', <, >)", error:true})
 
-    const result = await Model.update(id, name, price, stock, imgLocation, category)
+    const result = await Model.update(id, name, price, stock, imgLocation, category, imageid)
 
     if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`product with id ${id} not found`, error:true})
 
     RedisDB.client.select(0)
     RedisDB.client.flushdb()
 
-    return Respon(req, res, {code: 200, success:true})
+    const data = {
+      name,
+      image: imgLocation,
+      price,
+      stock,
+      category
+    }
+
+    return Respon(req, res, {code: 200, values: [data], success:true})
   } catch (error) {
+    console.log(error)
     return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the update function'), error:true})
   }
 }

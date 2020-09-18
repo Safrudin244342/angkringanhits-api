@@ -33,9 +33,9 @@ Product.search = (name) => {
   })
 }
 
-Product.add = (name, price, stock, imgLocation, category) => {
+Product.add = (name, price, stock, imgLocation, category, imageid) => {
   return new Promise((resolve, reject) => {
-    MyDB.query(`INSERT INTO product(name, price, stock, "imgLocation", category) VALUES ('${name}', ${parseInt(price)}, ${parseInt(stock)}, '${imgLocation}', '${category}')`)
+    MyDB.query(`INSERT INTO product(name, price, stock, "imgLocation", category, imageid) VALUES ('${name}', ${parseInt(price)}, ${parseInt(stock)}, '${imgLocation}', '${category}', '${imageid}')`)
       .then(res => {
         resolve(res)
       })
@@ -45,9 +45,9 @@ Product.add = (name, price, stock, imgLocation, category) => {
   })
 }
 
-Product.update = (id, name, price, stock, imgLocation, category) => {
+Product.update = (id, name, price, stock, imgLocation, category, imageid) => {
   return new Promise((resolve, reject) => {
-    MyDB.query(`UPDATE product SET name='${name}', price=${parseInt(price)}, stock=${parseInt(stock)}, "imgLocation"='${imgLocation}', category='${category}' WHERE id=${id}`)
+    MyDB.query(`UPDATE product SET name='${name}', price=${parseInt(price)}, stock=${parseInt(stock)}, "imgLocation"='${imgLocation}', category='${category}', imageid='${imageid}' WHERE id=${id}`)
       .then(succes => {
         resolve(succes)
       })
@@ -85,13 +85,10 @@ Product.sort = (sortBy, action) => {
 
 Product.getImage = (id) => {
   return new Promise((resolve, reject) => {
-    MyDB.query(`SELECT "imgLocation" FROM product WHERE id=${id}`)
+    MyDB.query(`SELECT "imgLocation", imageid FROM product WHERE id=${id}`)
       .then(res => {
-        try {
-          resolve(res.rows[0].imgLocation)
-        } catch (err) {
-          reject(err)
-        }
+        if (res.rowCount === 0) return reject(res)
+        resolve(res.rows[0])
       })
       .catch(err => {
         reject(err)
