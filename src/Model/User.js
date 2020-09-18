@@ -1,9 +1,9 @@
 const MyDB = require('../Config/Database')
 const user = {}
 
-user.addUser = (username, password, rule) => {
+user.addUser = (username, password) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO "user"(username, password, rule) VALUES ('${username}', '${password}', '${rule}')`
+    const sql = `INSERT INTO "user"(username, password, rule) VALUES ('${username}', '${password}', 'user')`
     MyDB.query(sql)
       .then(res => {
         resolve(res)

@@ -21,14 +21,13 @@ user.getAll = async (req, res) => {
 
 user.addUser = async (req, res) => {
   try {
-    const { username, password, rule } = req.body
+    const { username, password} = req.body
 
     if (!Verifikasi.input(username, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid username, it must be a string and contain no symbol(', <, >)", error:true})
     if (!Verifikasi.input(password, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid password, it must be a string and contain no symbol(', <, >)", error:true})
-    if (!Verifikasi.input(rule, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid rule, it must be a string and contain no symbol(', <, >)", error:true})
     const passwordHash = await Hash(password)
 
-    await model.addUser(username, passwordHash, rule)
+    await model.addUser(username, passwordHash)
 
     RedisDB.client.select(2)
     RedisDB.client.flushdb()
