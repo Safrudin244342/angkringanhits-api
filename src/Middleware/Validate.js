@@ -29,6 +29,7 @@ Token.Refrash = async (req) => {
 
   await ModelUser.setToken(newHashToken, user)
   req.newToken = newToken
+  req.user = user
 
   return true
 }
@@ -36,9 +37,10 @@ Token.Refrash = async (req) => {
 Token.Admin = (req, res, next) => {
   const token = req.headers.token
 
-  if (!token) return Respon(req, res, {code: 400, errMsg:'kamu belum login', error:true})
-
-  const { rule } = jwtDecode(token)
+  if (!token) return Respon(req, res, {code: 400, errMsg:'login first', error:true})
+  const { user, rule } = jwtDecode(token)
+  req.user = user
+  
   if (rule !== 'admin') return Respon(req, res, {code: 400, errMsg:"you don't have permission", error:true})
 
   JWT.verify(token, (process.env.JWT_KEY || 'safrudin'), async (error, decode) => {
@@ -55,7 +57,9 @@ Token.Admin = (req, res, next) => {
 Token.user = (req, res, next) => {
   const token = req.headers.token
 
-  if (!token) return Respon(req, res, {code: 400, errMsg:'kamu belum login', error:true})
+  if (!token) return Respon(req, res, {code: 400, errMsg:'login first', error:true})
+  const { user, rule } = jwtDecode(token)
+  req.user = user
 
   JWT.verify(token, (process.env.JWT_KEY || 'safrudin'), async (error, decode) => {
     if (error) {

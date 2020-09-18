@@ -87,4 +87,18 @@ user.auth = async (req, res) => {
   }
 }
 
+user.logout = async (req, res) => {
+  try {
+    const username = req.user
+
+    const result = await model.logout(username)
+    if (result.rowCount === 0) return Respon(req, res, {code: 400, errMsg: 'Username not found'})
+    if (req.newToken) req.newToken = null
+
+    return Respon(req, res, {code: 200, success: true})
+  } catch (error) {
+    return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the logout function')})
+  }
+}
+
 module.exports = user

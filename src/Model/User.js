@@ -63,4 +63,13 @@ user.getAll = async () => {
   })
 }
 
+user.logout = async (username) => {
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE "user" SET token='' WHERE username='${username}'`
+    MyDB.query(sql)
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  })
+}
+
 module.exports = user

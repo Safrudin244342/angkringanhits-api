@@ -8,5 +8,6 @@ route.get('/', Validate.Admin, Chace.user, controller.getAll)
 route.post('/', controller.addUser)
 route.post('/auth', controller.auth)
 route.delete('/:id', Validate.Admin, controller.remUser)
+route.delete('/', Validate.user, controller.logout)
 
 module.exports = route
