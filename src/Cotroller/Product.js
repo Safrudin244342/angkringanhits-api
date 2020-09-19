@@ -36,7 +36,7 @@ Product.search = async (req, res) => {
 Product.add = async (req, res) => {
   try {
     const { name, price, stock, category } = req.body
-    if (!req.file) return res.send(Respon.Failed(400, "invalid image, image must be a image"))
+    if (!req.file) return Respon(req, res, {code: 400, errMsg:"invalid image, image must be a image", error:true})
     
     let imgLocation = req.file.path
     await cloudinary.uploader.upload(imgLocation, { tag: 'product' }, (err, image) => {
@@ -134,6 +134,14 @@ Product.update = async (req, res) => {
 Product.delete = async (req, res) => {
   try {
     const id = req.params.id
+
+    try {
+      dbImage = await Model.getImage(id)
+    } catch (err) {
+      return Respon(req, res, {code: 200, errMsg:`product with id ${id} not found`, error:true})
+    }
+
+    cloudinary.uploader.destroy(dbImage.imageid)
 
     if (!Verifikasi.input(id, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid id, it must be a number and contain no symbol(', <, >)", error:true})
     
