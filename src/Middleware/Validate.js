@@ -14,6 +14,7 @@ Token.Refrash = async (req) => {
   const dataDb = await ModelUser.getToken(user)
   if (dataDb.length <= 0) return false
   
+  console.log(tokenReq)
   console.log(ObjectHash(tokenReq))
   console.log(dataDb[0].token)
   const checkToken = ObjectHash(tokenReq) === dataDb[0].token
