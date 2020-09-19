@@ -95,7 +95,7 @@ Product.update = async (req, res) => {
         imageid = image.public_id
       })
 
-      cloudinary.uploader.destroy(dbImage.imageid)
+      if (dbImage.imageid === null || dbImage.imageid === '') cloudinary.uploader.destroy(dbImage.imageid)
       fs.unlink(req.file.path, err => console.log(err))
     } else {
       imgLocation = dbImage.imgLocation
@@ -142,7 +142,7 @@ Product.delete = async (req, res) => {
       return Respon(req, res, {code: 200, errMsg:(err.message || `product with id ${id} not found`), error:true})
     }
 
-    cloudinary.uploader.destroy(dbImage.imageid)
+    if (dbImage.imageid === null || dbImage.imageid === '') cloudinary.uploader.destroy(dbImage.imageid)
 
     if (!Verifikasi.input(id, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid id, it must be a number and contain no symbol(', <, >)", error:true})
     
