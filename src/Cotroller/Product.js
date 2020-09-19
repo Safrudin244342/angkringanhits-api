@@ -138,7 +138,8 @@ Product.delete = async (req, res) => {
     try {
       dbImage = await Model.getImage(id)
     } catch (err) {
-      return Respon(req, res, {code: 200, errMsg:`product with id ${id} not found`, error:true})
+      console.log(err)
+      return Respon(req, res, {code: 200, errMsg:(err.message || `product with id ${id} not found`), error:true})
     }
 
     cloudinary.uploader.destroy(dbImage.imageid)
