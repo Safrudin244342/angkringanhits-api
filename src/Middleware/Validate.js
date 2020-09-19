@@ -9,32 +9,38 @@ const Bcrypt = require('bcrypt')
 const Token = {}
 
 Token.Refrash = async (req) => {
-  const tokenReq = req.headers.token
-  const { user } = jwtDecode(tokenReq)
-  const dataDb = await ModelUser.getToken(user)
-  if (dataDb.length <= 0) return false
+  try {
+    const tokenReq = req.headers.token
+    const { user } = jwtDecode(tokenReq)
+    const dataDb = await ModelUser.getToken(user)
+    if (dataDb.length <= 0) return false
   
-  console.log(tokenReq)
-  console.log(ObjectHash(tokenReq))
-  console.log(dataDb[0].token)
-  const checkToken = ObjectHash(tokenReq) === dataDb[0].token
-  if (!checkToken) return false
+    console.log(tokenReq)
+    console.log(ObjectHash(tokenReq))
+    console.log(dataDb[0].token)
+    console.log(user)
+    const checkToken = ObjectHash(tokenReq) === dataDb[0].token
+    if (!checkToken) return false
   
-  const { rule } = dataDb[0]
+    const { rule } = dataDb[0]
   
-  const payload = {
-    user,
-    rule
+    const payload = {
+      user,
+      rule
+    }
+
+    const newToken = JWT.sign(payload, (process.env.JWT_KEY || 'safrudin'), { expiresIn: 60 })
+    const newHashToken = ObjectHash(newToken)
+
+    await ModelUser.setToken(newHashToken, user)
+    req.newToken = newToken
+    req.user = user
+
+    return true
+  } catch (error) {
+    console.log(error)
+    return false
   }
-
-  const newToken = JWT.sign(payload, (process.env.JWT_KEY || 'safrudin'), { expiresIn: 60 })
-  const newHashToken = ObjectHash(newToken)
-
-  await ModelUser.setToken(newHashToken, user)
-  req.newToken = newToken
-  req.user = user
-
-  return true
 }
 
 Token.Admin = (req, res, next) => {
