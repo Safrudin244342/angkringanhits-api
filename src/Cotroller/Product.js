@@ -36,6 +36,11 @@ Product.search = async (req, res) => {
 Product.add = async (req, res) => {
   try {
     const { name, price, stock, category } = req.body
+
+    if (!Verifikasi.input(name, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid name, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(price, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid price, it must be a number and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(stock, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid stock, it must be a number and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(category, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid category, it must be a string and contain no symbol(', <, >)", error:true})
     if (!req.file) return Respon(req, res, {code: 400, errMsg:"invalid image, image must be a image", error:true})
     
     let imgLocation = req.file.path
@@ -49,11 +54,7 @@ Product.add = async (req, res) => {
 
     if (imgLocation === req.file.path) imgLocation = `${process.env.APP_HOST}/${imgLocation}`
 
-    if (!Verifikasi.input(name, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid name, it must be a string and contain no symbol(', <, >)", error:true})
     if (!Verifikasi.input(imgLocation, 'string')) return Respon(req, res, {code: 400, errMsg:'invalid image, it must be a image file', error:true})
-    if (!Verifikasi.input(price, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid price, it must be a number and contain no symbol(', <, >)", error:true})
-    if (!Verifikasi.input(stock, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid stock, it must be a number and contain no symbol(', <, >)", error:true})
-    if (!Verifikasi.input(category, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid category, it must be a string and contain no symbol(', <, >)", error:true})
 
     await Model.add(name, price, stock, imgLocation, category, imageid)
 
