@@ -5,7 +5,7 @@ const Category = {}
 
 Category.all = async (req, res) => {
   try {
-    const data1 = await Model.all()
+    const data = await Model.all()
 
     return Respon(req, res, {code: 200, values: data, success:true})
   } catch (error) {
