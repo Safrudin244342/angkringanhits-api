@@ -5,7 +5,7 @@ const Category = {}
 
 Category.all = async (req, res) => {
   try {
-    const data = await Model.all()
+    const data1 = await Model.all()
 
     return Respon(req, res, {code: 200, values: data, success:true})
   } catch (error) {
@@ -37,7 +37,7 @@ Category.update = async (req, res) => {
 
     const result = await Model.update(id, category)
 
-    if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`category with id ${id} not found`, error:true})
+    if (result.rowCount === 0) return Respon(req, res, {code: 400, errMsg:`category with id ${id} not found`, error:true})
     
     return Respon(req, res, {code: 200, success:true})
   } catch (err) {
@@ -53,7 +53,7 @@ Category.delete = async (req, res) => {
 
     const result = await Model.delete(id)
 
-    if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`category with id ${id} not found`, error:true})
+    if (result.rowCount === 0) return Respon(req, res, {code: 400, errMsg:`category with id ${id} not found`, error:true})
     
     return Respon(req, res, {code: 200, success:true})
   } catch (err) {

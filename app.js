@@ -1,4 +1,5 @@
 require('dotenv/config')
+const LOG = require('./src/Config/Log')
 const express = require('express')
 const Routes = require('./src/main')
 const Server = express()
@@ -14,6 +15,7 @@ const log = (req, res, next) => {
   const url = req.url
 
   console.log(`${user} > Method: ${method} > url: ${url}`)
+  LOG.info('Request ', url)
   next()
 }
 
@@ -21,7 +23,7 @@ Server.use(cors())
 Server.use(bodyParser.urlencoded({ extended: false }))
 Server.use(bodyParser.json())
 Server.use(log)
-Server.use("/api", Routes)
+Server.use("/api", Routes, log)
 
 Server.use("/public", express.static('public'))
 

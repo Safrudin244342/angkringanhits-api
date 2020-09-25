@@ -13,6 +13,7 @@ Product.all = async (req, res) => {
     
     return Respon(req, res, {code: 200, values: data, success:true})
   } catch (error) {
+    console.log(error)
     return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the get all function'), error:true})
   }
 }
@@ -21,7 +22,7 @@ Product.search = async (req, res) => {
   try {
     let name = req.query.name
 
-    if (!Verifikasi.input(name, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid name, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(name, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid name, it must be a string and contain no symbol(', <, >)", error:true})
 
     name = name.split(' ')
     const data = await Model.search(name)
@@ -40,7 +41,7 @@ Product.add = async (req, res) => {
     if (!Verifikasi.input(name, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid name, it must be a string and contain no symbol(', <, >)", error:true})
     if (!Verifikasi.input(price, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid price, it must be a number and contain no symbol(', <, >)", error:true})
     if (!Verifikasi.input(stock, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid stock, it must be a number and contain no symbol(', <, >)", error:true})
-    if (!Verifikasi.input(category, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid category, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(category, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid category, it must be a string and contain no symbol(', <, >)", error:true})
     if (!req.file) return Respon(req, res, {code: 400, errMsg:"invalid image, image must be a image", error:true})
     
     let imgLocation = req.file.path
@@ -85,7 +86,7 @@ Product.update = async (req, res) => {
     try {
       dbImage = await Model.getImage(id)
     } catch (err) {
-      return Respon(req, res, {code: 200, errMsg:`product with id ${id} not found`, error:true})
+      return Respon(req, res, {code: 400, errMsg:`product with id ${id} not found`, error:true})
     }
 
     if (req.file) {
@@ -108,11 +109,11 @@ Product.update = async (req, res) => {
     if (!Verifikasi.input(imgLocation, 'string')) return Respon(req, res, {code: 400, errMsg:'invalid image, it must be a image file', error:true})
     if (!Verifikasi.input(price, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid price, it must be a number and contain no symbol(', <, >)", error:true})
     if (!Verifikasi.input(stock, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid stock, it must be a number and contain no symbol(', <, >)", error:true})
-    if (!Verifikasi.input(category, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid category, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(category, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid category, it must be a string and contain no symbol(', <, >)", error:true})
 
     const result = await Model.update(id, name, price, stock, imgLocation, category, imageid)
 
-    if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`product with id ${id} not found`, error:true})
+    if (result.rowCount === 0) return Respon(req, res, {code: 400, errMsg:`product with id ${id} not found`, error:true})
 
     RedisDB.client.select(0)
     RedisDB.client.flushdb()
@@ -140,7 +141,7 @@ Product.delete = async (req, res) => {
       dbImage = await Model.getImage(id)
     } catch (err) {
       console.log(err)
-      return Respon(req, res, {code: 200, errMsg:(err.message || `product with id ${id} not found`), error:true})
+      return Respon(req, res, {code: 400, errMsg:(err.message || `product with id ${id} not found`), error:true})
     }
 
     if (dbImage.imageid !== null && dbImage.imageid !== '') cloudinary.uploader.destroy(dbImage.imageid)
@@ -148,7 +149,7 @@ Product.delete = async (req, res) => {
     if (!Verifikasi.input(id, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid id, it must be a number and contain no symbol(', <, >)", error:true})
     
     const result = await Model.delete(id)
-    if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`product with id ${id} not found`, error:true})
+    if (result.rowCount === 0) return Respon(req, res, {code: 400, errMsg:`product with id ${id} not found`, error:true})
 
     RedisDB.client.select(0)
     RedisDB.client.flushdb()

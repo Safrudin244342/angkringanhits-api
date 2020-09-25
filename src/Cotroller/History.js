@@ -25,9 +25,9 @@ History.add = async (req, res) => {
   try {
     const { cashier, orders, amount } = req.body
 
-    if (!Verifikasi.input(cashier, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid cashier, it must be a string and contain no symbol(', <, >)", error:true})
-    if (!Verifikasi.input(orders, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid order, it must be a string and contain no symbol(', <, >)", error:true})
-    if (!Verifikasi.input(amount, 'number')) return Respon(req, res, {code: 200, errMsg:"invalid amount, it must be a number and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(cashier, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid cashier, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(orders, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid order, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(amount, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid amount, it must be a number and contain no symbol(', <, >)", error:true})
 
     await Model.add(cashier, orders, amount)
 
@@ -44,14 +44,14 @@ History.update = async (req, res) => {
     const id = req.params.id
     const { cashier, orders, amount } = req.body
 
-    if (!Verifikasi.input(id, 'number')) return Respon(req, res, {code: 200, errMsg:"invalid id, it must be a number and contain no symbol(', <, >)", error:true})
-    if (!Verifikasi.input(cashier, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid cashier, it must be a string and contain no symbol(', <, >)", error:true})
-    if (!Verifikasi.input(orders, 'string')) return Respon(req, res, {code: 200, errMsg:"invalid order, it must be a string and contain no symbol(', <, >)", error:true})
-    if (!Verifikasi.input(amount, 'number')) return Respon(req, res, {code: 200, errMsg:"invalid amount, it must be a number and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(id, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid id, it must be a number and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(cashier, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid cashier, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(orders, 'string')) return Respon(req, res, {code: 400, errMsg:"invalid order, it must be a string and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(amount, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid amount, it must be a number and contain no symbol(', <, >)", error:true})
 
     const result = await Model.update(id, cashier, orders, amount)
 
-    if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`history with id ${id} not found`, error:true})
+    if (result.rowCount === 0) return Respon(req, res, {code: 400, errMsg:`history with id ${id} not found`, error:true})
 
     RedisDB.client.select(1)
     RedisDB.client.flushdb()
@@ -65,11 +65,11 @@ History.delete = async (req, res) => {
   try {
     const id = req.params.id
 
-    if (!Verifikasi.input(id, 'number')) return Respon(req, res, {code: 200, errMsg:"invalid id, it must be a number and contain no symbol(', <, >)", error:true})
+    if (!Verifikasi.input(id, 'number')) return Respon(req, res, {code: 400, errMsg:"invalid id, it must be a number and contain no symbol(', <, >)", error:true})
 
     const result = await Model.delete(id)
 
-    if (result.rowCount === 0) return Respon(req, res, {code: 200, errMsg:`history with id ${id} not found`, error:true})
+    if (result.rowCount === 0) return Respon(req, res, {code: 400, errMsg:`history with id ${id} not found`, error:true})
 
     RedisDB.client.select(1)
     RedisDB.client.flushdb()
