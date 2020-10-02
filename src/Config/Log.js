@@ -5,7 +5,7 @@ const fileLog = `log/${new Date().getDate()}-${new Date().getMonth()}-${new Date
 
 try {
   if (!fs.existsSync(fileLog)){
-    fs.writeFileSync(fileLog)
+    fs.writeFileSync(fileLog, "\n")
   }
 } catch (err) {
   console.log(err)
