@@ -13,7 +13,6 @@ Product.all = async (req, res) => {
     
     return Respon(req, res, {code: 200, values: data, success:true})
   } catch (error) {
-    console.log(error)
     return Respon(req, res, {code: 500, errMsg:(error.message || 'Something wrong in the get all function'), error:true})
   }
 }
