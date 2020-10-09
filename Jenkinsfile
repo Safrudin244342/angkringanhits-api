@@ -41,8 +41,8 @@ pipeline {
       
       steps {
         script {
-          sh("docker rm 244342/angkringanbackend:${commitHash}")
-          sh("docker rm 244342/angkringanbackend:${env.GIT_BRANCH}")
+          sh("docker image rm 244342/angkringanbackend:${commitHash}")
+          sh("docker image rm 244342/angkringanbackend:${env.GIT_BRANCH}")
         }
       }
 
