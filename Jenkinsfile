@@ -7,10 +7,9 @@ pipeline {
   stages {
     
     stage('build') {
-      brance = env.BRANCH_NAME
+
       steps {
-        echo 'build'
-        echo brance
+        echo "build brach ${env.BRANCH_NAME}"
         echo 'finish'
       }
     }
