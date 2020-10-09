@@ -31,7 +31,18 @@ pipeline {
 
       steps {
         script {
-          builderDocker.push("production")
+          builderDocker.push("${env.GIT_BRANCH}")
+        }
+      }
+
+    }
+
+    stage('remove local images') {
+      
+      steps {
+        script {
+          sh("docker rm 244342/angkringanbackend:${commitHash}")
+          sh("docker rm 244342/angkringanbackend:${env.GIT_BRANCH}")
         }
       }
 
