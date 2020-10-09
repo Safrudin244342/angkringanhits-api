@@ -1,4 +1,4 @@
-def brance
+def builderDocker
 
 pipeline {
 
@@ -20,7 +20,8 @@ pipeline {
       steps {
         script {
           commitHash = sh (script : "git log -n 1 --pretty=format:'%H'", returnStdout: true)
-          echo "${commitHash}"
+          builderDocker = docker.build("244342/angkringanbackend:${commitHash}")
+          echo "${env.GIT_BRANCH}"    
         }
       }
     }
