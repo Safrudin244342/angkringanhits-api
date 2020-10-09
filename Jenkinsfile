@@ -6,11 +6,13 @@ pipeline {
 
   stages {
     
-    stage('build') {
+    stage('build project') {
 
       steps {
-        echo "build brach ${env.BRANCH_NAME}"
-        echo 'finish'
+        nodejs('npm') {
+          sh 'npm install'
+          echo 'build finish'
+        }
       }
     }
 
