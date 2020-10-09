@@ -1,3 +1,5 @@
+def brance
+
 pipeline {
 
   agent any
@@ -5,8 +7,10 @@ pipeline {
   stages {
     
     stage('build') {
+      brance = env.BRANCH_NAME
       steps {
         echo 'build'
+        echo brance
         echo 'finish'
       }
     }
