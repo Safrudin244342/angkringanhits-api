@@ -1,7 +1,14 @@
 pipeline {
-  stage('build') {
-    step {
-      echo 'building start'
+
+  agent any
+
+  stages {
+    
+    stage('build') {
+      steps {
+        echo 'build'
+      }
     }
+
   }
 }
