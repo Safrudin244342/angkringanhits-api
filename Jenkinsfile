@@ -37,6 +37,35 @@ pipeline {
 
     }
 
+    stage('deploy') {
+      when {
+        expression {
+          env.GIT_BRANCH == 'master'
+        }
+      }
+
+      steps {
+        
+        script {
+          sshPublisher(
+            publisher: [
+              sshPublisherDesc(
+                configName: 'server-production',
+                verbose: false,
+                transfers: [
+                  sshTransfer(
+                    execCommand: "docker pull 244342/angkringanbackend:${env.GIT_BRANCH}",
+                    execTimeout: 120000
+                  )
+                ]
+              )
+            ]
+          )
+        }
+
+      }
+    }
+
     stage('remove local images') {
       
       steps {
