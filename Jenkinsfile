@@ -48,7 +48,7 @@ pipeline {
         
         script {
           sshPublisher(
-            publisher: [
+            publishers: [
               sshPublisherDesc(
                 configName: 'server-production',
                 verbose: false,
