@@ -18,7 +18,8 @@ pipeline {
 
     stage('build docker image') {
       steps {
-        echo 'build docker image'
+        commitHash = sh (script : git logs -n 1 --pretty=format:"'%H", returnStdout: true)
+        echo "${commitHash}"
       }
     }
 
