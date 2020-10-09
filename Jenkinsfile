@@ -50,7 +50,7 @@ pipeline {
           sshPublisher(
             publishers: [
               sshPublisherDesc(
-                configName: 'server-production',
+                configName: 'angkringan-production',
                 verbose: false,
                 transfers: [
                   sshTransfer(
