@@ -1,0 +1,7 @@
+.env
+test.js
+*.log
+*.rdb
+/log/error/*
+docker-compose.yaml
+dump.rdb
