@@ -44,7 +44,7 @@ pipeline {
         script {
           if (env.GIT_BRANCH == 'master') {
             server = 'angkringan-production'
-          } else {
+          } else if (env.GIT_BRANCH == 'dev') {
             server = 'angkringan-dev'
           }
 
