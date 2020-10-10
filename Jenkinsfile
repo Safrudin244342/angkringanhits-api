@@ -38,19 +38,20 @@ pipeline {
     }
 
     stage('deploy') {
-      when {
-        expression {
-          env.GIT_BRANCH == 'master'
-        }
-      }
 
       steps {
         
         script {
+          if (env.GIT_BRANCH == 'master') {
+            server = 'angkringan-production'
+          } else {
+            server = 'angkringan-dev'
+          }
+
           sshPublisher(
             publishers: [
               sshPublisherDesc(
-                configName: 'angkringan-production',
+                configName: "${server}",
                 verbose: false,
                 transfers: [
                   sshTransfer(
