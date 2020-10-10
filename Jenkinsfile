@@ -38,13 +38,13 @@ pipeline {
     }
 
     stage('deploy') {
+      when {
+        expression {
+          env.GIT_BRANCH == 'dev' || env.GIT_BRANCH == 'master'
+        }
+      }
 
       steps {
-        when {
-          expression {
-            env.GIT_BRANCH == 'dev' || env.GIT_BRANCH == 'master'
-          }
-        }
         
         script {
           if (env.GIT_BRANCH == 'master') {
