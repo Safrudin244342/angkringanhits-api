@@ -20,6 +20,14 @@ pipeline {
       
       steps {
         script {
+          if (env.GIT_BRANCH == 'master') {
+            api_host = '100.26.51.189'
+          } else if (env.GIT_BRANCH == 'dev') {
+            api_host = '34.205.68.49'
+          } else {
+            api_host = '52.90.170.145'
+          }
+
           commitHash = sh (script : "git log -n 1 --pretty=format:'%H'", returnStdout: true)
           builderDocker = docker.build("244342/angkringanbackend:${commitHash}")
         }
@@ -49,8 +57,10 @@ pipeline {
         script {
           if (env.GIT_BRANCH == 'master') {
             server = 'angkringan-production'
+            command = "/home/beningproduction/docker/docker-update.sh"
           } else if (env.GIT_BRANCH == 'dev') {
             server = 'angkringan-dev'
+            command = "/home/beningdev/docker/docker-update.sh"
           }
 
           sshPublisher(
@@ -60,7 +70,7 @@ pipeline {
                 verbose: false,
                 transfers: [
                   sshTransfer(
-                    execCommand: "docker pull 244342/angkringanbackend:${env.GIT_BRANCH}",
+                    execCommand: "${command}",
                     execTimeout: 120000
                   )
                 ]
@@ -78,6 +88,7 @@ pipeline {
         script {
           sh("docker image rm 244342/angkringanbackend:${commitHash}")
           sh("docker image rm 244342/angkringanbackend:${env.GIT_BRANCH}")
+          sh('docker rmi `docker images | grep "<none>" | awk {"print $ 3"}`')
         }
       }
 
