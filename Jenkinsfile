@@ -4,6 +4,10 @@ pipeline {
 
   agent any
 
+  parameters {
+    choice(name: 'CICD', choices: ['CICD', 'CI'], description: 'Pilih salah satu')
+  }
+
   stages {
     
     stage('build project') {
@@ -49,6 +53,7 @@ pipeline {
       when {
         expression {
           env.GIT_BRANCH == 'dev' || env.GIT_BRANCH == 'master'
+          params.CICD == 'CICD'
         }
       }
 
