@@ -6,6 +6,7 @@ pipeline {
 
   parameters {
     choice(name: 'CICD', choices: ['CICD', 'CI'], description: 'Pilih salah satu')
+    booleanParam(name: 'RMI', defaultValue: true, description: 'Remove image after build')
   }
 
   stages {
@@ -88,6 +89,12 @@ pipeline {
     }
 
     stage('remove local images') {
+
+      when {
+        expression {
+          params.RMI
+        }
+      }
       
       steps {
         script {
