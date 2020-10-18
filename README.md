@@ -1,4 +1,4 @@
-# angkringanhits-api.
+# angkringanhits-api
 
 **Restfull API for website Angkringan hits**
 
