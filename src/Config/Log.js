@@ -4,8 +4,8 @@ const fs = require('fs')
 const fileLog = `log/${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}.log`
 
 try {
-  if (!fs.existsSync('log')) {
-    fs.mkdir("./new-directory-name", function(err) {
+  if (!fs.existsSync('./log')) {
+    fs.mkdir("./log", function(err) {
       if (err) {
         console.log(err)
       }
