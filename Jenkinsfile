@@ -61,7 +61,7 @@ pipeline {
           if (env.GIT_BRANCH == 'master') {
             host = "angkringanstag"
           } else if (env.GIT_BRANCH == 'dev') {
-            host = "angkringanstag"
+            host = "angkringandev"
           }
 
           sshPublisher(
