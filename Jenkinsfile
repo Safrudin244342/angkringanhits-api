@@ -34,7 +34,7 @@ pipeline {
                 transfers: [
                   sshTransfer(
                     remoteDirectory: "/home/ansible/ansible/backend",
-                    execCommand: "ansible-playbook build.yml -e 'branch=${env.GIT_BRANCH}' -e 'ansible_python_interpreter=/usr/bin/python2.7'",
+                    execCommand: "pwd",
                     execTimeout: 120000
                   )
                 ]
