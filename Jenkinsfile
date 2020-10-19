@@ -57,7 +57,28 @@ pipeline {
       steps {
         
         script {
-          echo "deploy"
+
+          if (env.GIT_BRANCH == 'master') {
+            host = "angkringanstag"
+          } else if (env.GIT_BRANCH == 'dev') {
+            host = "angkringandev"
+          }
+
+          sshPublisher(
+            publishers: [
+              sshPublisherDesc(
+                configName: "ansible-master",
+                verbose: false,
+                transfers: [
+                  sshTransfer(
+                    execCommand: "ansible-playbook -i ansible/hosts ansible/backend/deploy.yml -e 'branch=${env.GIT_BRANCH}' -e 'host=${host}'",
+                    execTimeout: 120000
+                  )
+                ]
+              )
+            ]
+          )
+
         }
 
       }
