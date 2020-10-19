@@ -25,26 +25,22 @@ pipeline {
       
       steps {
         script {
-          if (env.GIT_BRANCH == 'master') {
-            api_host = '100.26.51.189'
-          } else if (env.GIT_BRANCH == 'dev') {
-            api_host = '34.205.68.49'
-          } else {
-            api_host = '52.90.170.145'
-          }
+          
+          sshPublisher(
+            publishers: [
+              sshPublisherDesc(
+                configName: "ansible-master",
+                verbose: false,
+                transfers: [
+                  sshTransfer(
+                    execCommand: "ansible-playbook ansible/backend/build.yml -e 'branch=${env.GIT_BRANCH}' -e 'ansible_python_interpreter=/usr/bin/python2.7'",
+                    execTimeout: 120000
+                  )
+                ]
+              )
+            ]
+          )
 
-          commitHash = sh (script : "git log -n 1 --pretty=format:'%H'", returnStdout: true)
-          builderDocker = docker.build("244342/angkringanbackend:${commitHash}")
-        }
-      }
-
-    }
-
-    stage('push image') {
-
-      steps {
-        script {
-          builderDocker.push("${env.GIT_BRANCH}")
         }
       }
 
@@ -61,48 +57,10 @@ pipeline {
       steps {
         
         script {
-          if (env.GIT_BRANCH == 'master') {
-            server = 'angkringan-production'
-            command = "/home/beningproduction/docker/docker-update.sh"
-          } else if (env.GIT_BRANCH == 'dev') {
-            server = 'angkringan-dev'
-            command = "/home/beningdev/docker/docker-update.sh"
-          }
-
-          sshPublisher(
-            publishers: [
-              sshPublisherDesc(
-                configName: "${server}",
-                verbose: false,
-                transfers: [
-                  sshTransfer(
-                    execCommand: "${command}",
-                    execTimeout: 120000
-                  )
-                ]
-              )
-            ]
-          )
+          echo "deploy"
         }
 
       }
-    }
-
-    stage('remove local images') {
-
-      when {
-        expression {
-          params.RMI
-        }
-      }
-      
-      steps {
-        script {
-          sh("docker image rm 244342/angkringanbackend:${commitHash}")
-          sh("docker image rm 244342/angkringanbackend:${env.GIT_BRANCH}")
-        }
-      }
-
     }
 
   }
