@@ -24,23 +24,19 @@ pipeline {
     stage('build docker image') {
       
       steps {
-        script {
-          
-          sshPublisher(
-            publishers: [
-              sshPublisherDesc(
-                configName: "ansible-master",
-                verbose: false,
-                transfers: [
-                  sshTransfer(
-                    execCommand: "ansible-playbook ansible/backend/build.yml -e 'branch=${env.GIT_BRANCH}' -e 'ansible_python_interpreter=/usr/bin/python2.7'",
-                    execTimeout: 120000
-                  )
-                ]
-              )
-            ]
-          )
+        script {          
+          commitHash = sh (script : "git log -n 1 --pretty=format:'%H'", returnStdout: true)
+          builderDocker = docker.build("244342/angkringanbackend:${commitHash}")
+        }
+      }
 
+    }
+
+    stage('push image') {
+
+      steps {
+        script {
+          builderDocker.push("${env.GIT_BRANCH}")
         }
       }
 
@@ -58,20 +54,14 @@ pipeline {
         
         script {
 
-          if (env.GIT_BRANCH == 'master') {
-            host = "angkringanstag"
-          } else if (env.GIT_BRANCH == 'dev') {
-            host = "angkringandev"
-          }
-
           sshPublisher(
             publishers: [
               sshPublisherDesc(
-                configName: "ansible-master",
+                configName: "kubernetes",
                 verbose: false,
                 transfers: [
                   sshTransfer(
-                    execCommand: "ansible-playbook -i ansible/hosts ansible/backend/deploy.yml -e 'branch=${env.GIT_BRANCH}' -e 'host=${host}'",
+                    execCommand: "kubectl set image deployment.apps/backend backend=244342/angkringanbackend:${env.GIT_BRANCH} -n angkringanhits",
                     execTimeout: 120000
                   )
                 ]
@@ -82,6 +72,17 @@ pipeline {
         }
 
       }
+    }
+
+    stage('remove local images') {
+
+      steps {
+        script {
+          sh("docker image rm 244342/angkringanbackend:${commitHash}")
+          sh("docker image rm 244342/angkringanbackend:${env.GIT_BRANCH}")
+        }
+      }
+
     }
 
   }
