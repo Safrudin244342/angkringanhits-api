@@ -61,7 +61,7 @@ pipeline {
                 verbose: false,
                 transfers: [
                   sshTransfer(
-                    execCommand: "kubectl get pods -n angkringanhits-master | grep backend | kubectl delete pod \$(awk {'print \$ 1'}) -n angkringanhits-master",
+                    execCommand: "kubectl rollout restart deployment.apps/backend -n angkringanhits-${env.GIT_BRANCH}",
                     execTimeout: 120000
                   )
                 ]
