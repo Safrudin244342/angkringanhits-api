@@ -61,7 +61,7 @@ pipeline {
                 verbose: false,
                 transfers: [
                   sshTransfer(
-                    execCommand: "kubectl get pods -n angkringanhits-master | grep backend | kubectl delete pod $(awk {'print $ 1'}) -n angkringanhits-master",
+                    execCommand: "kubectl get pods -n angkringanhits-master | grep backend | kubectl delete pod \$(awk {'print $ 1'}) -n angkringanhits-master",
                     execTimeout: 120000
                   )
                 ]
