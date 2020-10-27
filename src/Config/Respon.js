@@ -26,7 +26,8 @@ const Respon = (req, res, value) => {
     success: (value.success || false),
     error: (value.error || false),
     token: token,
-    errMsg: (value.errMsg || null)
+    errMsg: (value.errMsg || null),
+    status: 'dev'
   }
   
   return res.send(resSend)
