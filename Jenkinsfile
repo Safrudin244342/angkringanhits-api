@@ -61,7 +61,7 @@ pipeline {
                 verbose: false,
                 transfers: [
                   sshTransfer(
-                    execCommand: "kubectl set image deployment.apps/backend backend=244342/angkringanbackend:${env.GIT_BRANCH} -n angkringanhits",
+                    execCommand: "kubectl get pods -n angkringanhits-${env.GIT_BRANCH} | grep backend | kubectl delete pod $(awk {'print $ 1'}) -n angkringanhits-${env.GIT_BRANCH}",
                     execTimeout: 120000
                   )
                 ]
