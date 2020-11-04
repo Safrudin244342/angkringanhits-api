@@ -10,16 +10,6 @@ pipeline {
   }
 
   stages {
-    
-    stage('build project') {
-
-      steps {
-        nodejs('npm') {
-          sh 'npm install'
-          echo 'build finish'
-        }
-      }
-    }
 
     stage('build docker image') {
       
