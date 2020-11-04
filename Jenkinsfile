@@ -16,7 +16,6 @@ pipeline {
       steps {
         nodejs('npm') {
           sh 'npm install'
-          echo 'build finish'
         }
       }
     }
@@ -37,6 +36,16 @@ pipeline {
       steps {
         script {
           builderDocker.push("${env.GIT_BRANCH}")
+        }
+      }
+
+    }
+
+    stage('deploy application') {
+      
+      steps{
+        script {
+          sh 'ansible-playbook -i ansible/hosts ansible/backend.yml -e "branch=master" -e "host=server-prod"'
         }
       }
 
