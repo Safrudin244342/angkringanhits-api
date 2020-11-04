@@ -5,3 +5,4 @@ test.js
 /log/error/*
 docker-compose.yaml
 dump.rdb
+backup
