@@ -1,0 +1,46 @@
+---
+
+- name: deploy application
+  hosts: "{{ host }}"
+  become: yes
+  vars:
+    con_name: backend
+    project: angkringanbackend
+    dockerid: "244342"
+
+  tasks:
+   - name: ensure docker installed
+     apt:
+      name: docker
+      state: present
+     tags: always
+
+   - name: ensure python docker
+     pip:
+      name: docker
+      state: present
+
+   - name: ensure docker running
+     service:
+      name: docker
+      state: started
+      enabled: yes
+     tags: always
+
+   - name: Remove container
+     community.general.docker_container:
+      name: "{{ con_name }}"
+      state: absent
+
+   - name: remove image
+     community.general.docker_image: 
+      name: "{{ dockerid }}/{{ project }}:{{ branch }}"
+      state: absent
+
+   - name: Get new image
+     community.general.docker_image:
+      name: "{{ dockerid }}/{{ project }}:{{ branch }}"
+      source: pull
+
+   - name: Create a container
+     shell: "docker run --rm -d --network='host' --env-file=/root/backend --name {{ con_name }} {{ dockerid }}/{{ project }}:{{ branch }}"
