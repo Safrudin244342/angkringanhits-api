@@ -45,7 +45,7 @@ pipeline {
       
       steps{
         script {
-          sh 'ansible-playbook -i ansible/hosts ansible/backend.yml -e "branch=master" -e "host=server-prod"'
+          sh 'ansible-playbook -i ansible/hosts ansible/deploy.yml -e "branch=master" -e "host=server-prod"'
         }
       }
 
