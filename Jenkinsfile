@@ -42,38 +42,6 @@ pipeline {
 
     }
 
-    stage('deploy') {
-      when {
-        expression {
-          env.GIT_BRANCH == 'dev' || env.GIT_BRANCH == 'master'
-          params.CICD == 'CICD'
-        }
-      }
-
-      steps {
-        
-        script {
-
-          sshPublisher(
-            publishers: [
-              sshPublisherDesc(
-                configName: "kubernetes",
-                verbose: false,
-                transfers: [
-                  sshTransfer(
-                    execCommand: "kubectl rollout restart deployment.apps/backend -n angkringanhits-${env.GIT_BRANCH}",
-                    execTimeout: 120000
-                  )
-                ]
-              )
-            ]
-          )
-
-        }
-
-      }
-    }
-
     stage('remove local images') {
 
       steps {
