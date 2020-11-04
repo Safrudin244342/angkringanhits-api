@@ -46,14 +46,12 @@ pipeline {
       steps{
         script {
           if (env.GIT_BRANCH == 'master') {
-            host = "server-prod"
-            file = "deploy-prod.yml"
+            cmd = 'ansible-playbook -i ansible/hosts ansible/deploy-prod.yml -e "branch=server-prod" -e "host=${host}"'
           } else if (env.GIT_BRANCH == 'dev') {
-            host = "server-dev"
-            file = "deploy-dev.yml"
+            cmd = 'ansible-playbook -i ansible/hosts ansible/deploy-dev.yml -e "branch=server-dev" -e "host=${host}"'
           }
           
-          sh 'ansible-playbook -i ansible/hosts ansible/\"${file}\".yml -e "branch=\"${env.GIT_BRANCH}\"" -e "host=${host}"'
+          sh cmd
         }
       }
 
