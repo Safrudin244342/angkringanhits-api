@@ -53,7 +53,7 @@ pipeline {
             file = "deploy-dev.yml"
           }
           
-          sh 'ansible-playbook -i ansible/hosts ansible/${file}.yml -e "branch=${env.GIT_BRANCH}" -e "host=${host}"'
+          sh 'ansible-playbook -i ansible/hosts ansible/\"$file\".yml -e "branch=\"$env.GIT_BRANCH\"" -e "host=${host}"'
         }
       }
 
