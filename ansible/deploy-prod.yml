@@ -28,19 +28,13 @@
      tags: always
 
    - name: Remove container
-     community.general.docker_container:
-      name: "{{ con_name }}"
-      state: absent
+     shell: "docker container rm {{ con_name }}"
 
    - name: remove image
-     community.general.docker_image: 
-      name: "{{ dockerid }}/{{ project }}:{{ branch }}"
-      state: absent
+     shell: "docker image rm {{ dockerid }}/{{ project }}:{{ branch }}"
 
    - name: Get new image
-     community.general.docker_image:
-      name: "{{ dockerid }}/{{ project }}:{{ branch }}"
-      source: pull
+     shell: "docker pull {{ dockerid }}/{{ project }}:{{ branch }}"
 
    - name: Create a container
      shell: "docker run --rm -d --network='host' --env-file=/root/backend --name {{ con_name }} {{ dockerid }}/{{ project }}:{{ branch }}"
