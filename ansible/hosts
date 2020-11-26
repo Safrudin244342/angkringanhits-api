@@ -1,2 +1,2 @@
-server-prod ansible_user=bening ansible_host=172.31.17.71
+server-prod ansible_user=ansible ansible_host=172.31.17.71
 server-dev ansible_user=bening ansible_host=172.31.24.206
