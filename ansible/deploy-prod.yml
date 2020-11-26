@@ -28,7 +28,7 @@
      tags: always
 
    - name: Remove container
-     shell: "docker container rm {{ con_name }}"
+     shell: "docker container stop {{ con_name }}"
 
    - name: remove image
      shell: "docker image rm {{ dockerid }}/{{ project }}:{{ branch }}"
